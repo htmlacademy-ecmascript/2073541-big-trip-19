@@ -31,7 +31,7 @@ function createListSortTemplate() {
   );
 }
 
-export default class NewListSortView {
+export default class ListSortView {
   getTemplate() {
     return createListSortTemplate();
   }
