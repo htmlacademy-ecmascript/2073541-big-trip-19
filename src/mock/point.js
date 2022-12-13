@@ -1,5 +1,6 @@
 
 import { getRandomArrayElement, getRandomInt } from '../utils.js';
+import dayjs from 'dayjs';
 
 
 const DESCRIPTIONS = [
@@ -13,86 +14,102 @@ const DESCRIPTIONS = [
 ];
 
 
-const getDescription = () => getRandomArrayElement(DESCRIPTIONS);
 const getPictures = () => {
   const getPhotoLink = () => `https://loremflickr.com/248/152?random=${getRandomInt(0,100)}`;
   const picturesCount = getRandomInt(1, 5);
   return Array.from({length:picturesCount}).map(getPhotoLink);
 };
+const getRandomStartDate = () => dayjs()
+  .subtract(getRandomInt(1, 24), 'h')
+  .add(getRandomInt(1, 60), 'm');
 
+const getRandomEndDate = () => dayjs()
+  .add(getRandomInt(1, 24), 'h')
+  .add(getRandomInt(1, 60), 'm');
 
 const destinations = [
-  { id: 1,
-    description: getDescription(),
+  {
+    id: 1,
+    description: getRandomArrayElement(DESCRIPTIONS),
     name: 'Geneva',
     pictures: [{
       src: getPictures(),
-      description: getDescription()
+      description: getRandomArrayElement(DESCRIPTIONS)
     }]
   },
-  { id: 2,
-    description: getDescription(),
+  {
+    id: 2,
+    description: getRandomArrayElement(DESCRIPTIONS),
     name: 'Amsterdam',
     pictures: [{
       src: getPictures(),
-      description: getDescription()
+      description: getRandomArrayElement(DESCRIPTIONS)
     }]
   },
-  { id:3,
-    description: getDescription(),
+  {
+    id:3,
+    description: getRandomArrayElement(DESCRIPTIONS),
     name: 'Berlin',
     pictures: [{
       src: getPictures(),
-      description: getDescription()
+      description: getRandomArrayElement(DESCRIPTIONS)
     }]
   },
-  { id: 4,
-    description: getDescription(),
+  {
+    id: 4,
+    description: getRandomArrayElement(DESCRIPTIONS),
     name: 'Rome',
     pictures: [{
       src: getPictures(),
-      description: getDescription()
+      description: getRandomArrayElement(DESCRIPTIONS)
     }]
   },
-  { id: 5,
-    description: getDescription(),
+  {
+    id: 5,
+    description: getRandomArrayElement(DESCRIPTIONS),
     name: 'Milan',
     pictures: [{
       src: getPictures(),
-      description: getDescription()
+      description: getRandomArrayElement(DESCRIPTIONS)
     }]
   }
 ];
 
 const offersByType = [
-  {type:'taxi',
+  {
+    type:'taxi',
     offers:[{
       id: 1,
       title: 'Upgrade to a business class',
-      price: getRandomInt(10,30)
+      price: getRandomInt(10, 30)
     },
     {
       id: 2,
       title: 'Add luggage',
-      price: getRandomInt(10,30)
-    }]
+      price: getRandomInt(10, 30)
+    }
+    ]
   },
-  {type:'drive',
+  {
+    type:'drive',
     offers:[{
       id: 3,
       title: 'Rent a car',
-      price: getRandomInt(10,30)
-    }]
+      price: getRandomInt(10, 30)
+    }
+    ]
   },
-  {type:'flight',
+  {
+    type:'flight',
     offers:[{
       id: 5,
       title: 'Switch to comfort',
-      price: getRandomInt(10,30)
+      price: getRandomInt(10, 30)
     },
-    { id: 4,
+    {
+      id: 4,
       title: 'Book tickets',
-      price: getRandomInt(10,30)}]
+      price: getRandomInt(10, 30)}]
   },
   {
     type: 'check-in',
@@ -100,7 +117,7 @@ const offersByType = [
       {
         'id': 1,
         'title': 'Add meal',
-        'price': getRandomInt(10,30)
+        'price': getRandomInt(10, 30)
       }
     ]
   }
@@ -110,8 +127,8 @@ const offersByType = [
 const points = [
   {
     basePrice: getRandomInt(100, 1000),
-    dateFrom: '2022-07-10T22:55:56.845Z',
-    dateTo: '2022-07-10T23:51:56.845Z',
+    dateFrom: getRandomStartDate(),
+    dateTo: getRandomEndDate(),
     destination: [1],
     id: '1',
     isFavorite: false,
@@ -120,8 +137,8 @@ const points = [
   },
   {
     basePrice: getRandomInt(100, 1000),
-    dateFrom: '2022-07-08T12:55:56.845Z',
-    dateTo: '2022-07-10T22:55:56.845Z',
+    dateFrom: getRandomStartDate(),
+    dateTo: getRandomEndDate(),
     destination: [2],
     id: '2',
     isFavorite: false,
@@ -130,18 +147,18 @@ const points = [
   },
   {
     basePrice: getRandomInt(100, 1000),
-    dateFrom: '2022-08-06T03:55:56.845Z',
-    dateTo: '2022-08-10T04:55:56.845Z',
+    dateFrom: getRandomStartDate(),
+    dateTo: getRandomEndDate(),
     destination: [3],
     id: '3',
     isFavorite: true,
-    offers: [0],
+    offers: [],
     type: 'drive'
   },
   {
     basePrice: getRandomInt(100, 1000),
-    dateFrom: '2022-08-15T00:00:00.845Z',
-    dateTo: '2022-08-16T20:55:56.845Z',
+    dateFrom: getRandomStartDate(),
+    dateTo: getRandomEndDate(),
     destination: [4],
     id: '4',
     isFavorite: false,
@@ -150,12 +167,12 @@ const points = [
   },
   {
     basePrice: getRandomInt(100, 1000),
-    dateFrom: '2022-08-10T16:00:00.845Z',
-    dateTo: '2022-08-11T20:30:56.845Z',
+    dateFrom: getRandomStartDate(),
+    dateTo: getRandomEndDate(),
     destination: [5],
     id: '5',
     isFavorite: false,
-    offers: [0],
+    offers: [],
     type: 'check-in'
   }
 ];

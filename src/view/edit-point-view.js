@@ -1,12 +1,12 @@
 import {createElement} from '../render.js';
-import { destinations, offersByType } from '../mock/point.js';
 import dayjs from 'dayjs';
+//const POINT_TYPES = ['taxi', 'bus', 'train', 'ship', 'drive', 'flight', 'check-in', 'sightseeing', 'restaurant'];
 
-function createEditPointTemplate (point) {
+function createEditPointTemplate (point, allOffers, destinations ) {
   const { type, dateFrom, dateTo, basePrice, destination, offers} = point;
 
   const pointDestination = destinations.find((item) => destination.includes(item.id));
-  const pointOfferByType = offersByType.find((offer) => offer.type === type);
+  const pointOfferByType = allOffers.find((offer) => offer.type === type);
 
   const pointOffers = pointOfferByType.offers;
 
@@ -21,6 +21,7 @@ function createEditPointTemplate (point) {
           <span class="event__offer-price">${offer.price}</span>
         </label>
    </div>`).join('');
+
 
   return (
     `<li class="trip-events__item">
@@ -136,12 +137,14 @@ function createEditPointTemplate (point) {
 }
 export default class EditPointView {
 
-  constructor({ point }) {
+  constructor({ point, allOffers, destinations }) {
     this.point = point;
+    this.allOffers = allOffers;
+    this.destinations = destinations;
   }
 
   getTemplate() {
-    return createEditPointTemplate(this.point);
+    return createEditPointTemplate(this.point, this.allOffers, this.destinations);
   }
 
   getElement() {

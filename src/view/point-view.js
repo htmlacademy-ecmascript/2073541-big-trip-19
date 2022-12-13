@@ -1,15 +1,14 @@
 import {createElement} from '../render.js';
-import { destinations, offersByType } from '../mock/point.js';
 import dayjs from 'dayjs';
 import {getEventDuration} from '../utils.js';
 
 
-function createListItemTemplate(point) {
+function createListItemTemplate(point, allOffers, destinations) {
   const { type, dateFrom, dateTo, basePrice, destination, offers, isFavorite} = point;
 
   const pointDestination = destinations.find((item) => destination.includes(item.id));
 
-  const pointOfferByType = offersByType.find((offer) => offer.type === type);
+  const pointOfferByType = allOffers.find((offer) => offer.type === type);
 
   const pointOffers = pointOfferByType.offers.filter((offer) => offers.includes(offer.id));
 
@@ -61,12 +60,14 @@ function createListItemTemplate(point) {
 
 export default class ListItemView {
 
-  constructor({ point }) {
+  constructor({ point, allOffers, destinations }) {
     this.point = point;
+    this.allOffers = allOffers;
+    this.destinations = destinations;
   }
 
   getTemplate() {
-    return createListItemTemplate(this.point);
+    return createListItemTemplate(this.point, this.allOffers, this.destinations);
   }
 
   getElement() {
