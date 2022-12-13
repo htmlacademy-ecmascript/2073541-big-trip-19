@@ -13,6 +13,8 @@ const DESCRIPTIONS = [
   'Sed sed nisi sed augue convallis suscipit in sed felis'
 ];
 
+//const POINT_TYPES = ['taxi', 'bus', 'train', 'ship', 'drive', 'flight', 'check-in', 'sightseeing', 'restaurant'];
+
 
 const getPictures = () => {
   const getPhotoLink = () => `https://loremflickr.com/248/152?random=${getRandomInt(0,100)}`;
@@ -120,18 +122,39 @@ const offersByType = [
         'price': getRandomInt(10, 30)
       }
     ]
-  }
+  },
+  {
+    type: 'bus',
+    offers:[]
+  },
+  {
+    type: 'train',
+    offers:[]
+  },
+  {
+    type: 'ship',
+    offers:[]
+  },
+  {
+    type: 'sightseeing',
+    offers:[]
+  },
+  {
+    type: 'restaurant',
+    offers:[]
+  },
+
 ];
 
 
-const points = [
+const mockPoints = [
   {
     basePrice: getRandomInt(100, 1000),
     dateFrom: getRandomStartDate(),
     dateTo: getRandomEndDate(),
     destination: [1],
     id: '1',
-    isFavorite: false,
+    isFavorite: Boolean(getRandomInt(1, 2)),
     offers: [1],
     type: 'taxi'
   },
@@ -141,7 +164,7 @@ const points = [
     dateTo: getRandomEndDate(),
     destination: [2],
     id: '2',
-    isFavorite: false,
+    isFavorite: Boolean(getRandomInt(0, 1)),
     offers: [3],
     type: 'drive'
   },
@@ -151,7 +174,7 @@ const points = [
     dateTo: getRandomEndDate(),
     destination: [3],
     id: '3',
-    isFavorite: true,
+    isFavorite: Boolean(getRandomInt(0, 1)),
     offers: [],
     type: 'drive'
   },
@@ -161,7 +184,7 @@ const points = [
     dateTo: getRandomEndDate(),
     destination: [4],
     id: '4',
-    isFavorite: false,
+    isFavorite: Boolean(getRandomInt(0, 1)),
     offers: [4, 5],
     type: 'flight'
   },
@@ -171,11 +194,35 @@ const points = [
     dateTo: getRandomEndDate(),
     destination: [5],
     id: '5',
-    isFavorite: false,
+    isFavorite: Boolean(getRandomInt(0, 1)),
     offers: [],
     type: 'check-in'
+  },
+  {
+    basePrice: getRandomInt(100, 1000),
+    dateFrom: getRandomStartDate(),
+    dateTo: getRandomEndDate(),
+    destination: [5],
+    id: '6',
+    isFavorite: Boolean(getRandomInt(0, 1)),
+    offers: [],
+    type: 'sightseeing'
+  },
+  {
+    basePrice: getRandomInt(100, 1000),
+    dateFrom: getRandomStartDate(),
+    dateTo: getRandomEndDate(),
+    destination: [5],
+    id: '7',
+    isFavorite: Boolean(getRandomInt(0, 1)),
+    offers: [],
+    type: 'restaurant'
   }
 ];
+
+const shuffle = (array) => array.sort(() => Math.random() - 0.5);
+const points = shuffle(mockPoints);
+
 
 export{ points, destinations, offersByType };
 
