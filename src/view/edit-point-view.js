@@ -22,12 +22,13 @@ function createEditPointTemplate (point, allOffers, destinations ) {
         </label>
    </div>`).join('');
 
-  const allTypesList = allOffers.map((item) =>
+  const typesList = allOffers.map((offer) =>
     `<div class="event__type-item">
-     <input id="event-type-${item.type}-${item.id}" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${item.type}">
-     <label class="event__type-label  event__type-label--${item.type}" for="event-type-${item.type}-${item.id}">${item.type}</label>
+     <input id="event-type-${offer.type}-${offer.id}" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${offer.type}">
+     <label class="event__type-label  event__type-label--${offer.type}" for="event-type-${offer.type}-${offer.id}">${offer.type}</label>
    </div>
    `).join('');
+  const destinationsList = destinations.map((item) => `<option value="${item.name}"></option>`).join('');
 
 
   return (
@@ -44,7 +45,7 @@ function createEditPointTemplate (point, allOffers, destinations ) {
             <div class="event__type-list">
               <fieldset class="event__type-group">
                 <legend class="visually-hidden">Event type</legend>
-                ${allTypesList}
+                ${typesList}
               </fieldset>
             </div>
           </div>
@@ -55,9 +56,7 @@ function createEditPointTemplate (point, allOffers, destinations ) {
             </label>
             <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value=${pointDestination.name} list="destination-list-1">
             <datalist id="destination-list-1">
-              <option value="Amsterdam"></option>
-              <option value="Geneva"></option>
-              <option value="Chamonix"></option>
+              ${destinationsList}
             </datalist>
           </div>
 
