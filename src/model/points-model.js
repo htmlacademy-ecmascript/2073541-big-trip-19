@@ -1,20 +1,20 @@
 import { points, destinations, offersByType } from '../mock/point.js';
 
 export default class PointsModel {
-  points = points;
-  destinations = destinations;
-  offersByType = offersByType;
+  #points = points;
+  #destinations = destinations;
+  #offersByType = offersByType;
 
-  getPoints() {
-    return this.points;
+  get points() {
+    return this.#points;
   }
 
-  getDestinations() {
-    return this.destinations;
+  get destinations() {
+    return this.#destinations;
   }
 
-  getOffersByType() {
-    return this.offersByType;
+  get offersByType() {
+    return this.#offersByType;
 
   }
 

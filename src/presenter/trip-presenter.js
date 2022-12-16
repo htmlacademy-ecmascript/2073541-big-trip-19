@@ -16,21 +16,21 @@ export default class TripPresenter {
   }
 
   init(container) {
-    this.listPoints = this.pointsModel.getPoints();
-    this.destinations = this.pointsModel.getDestinations();
-    this.offersByType = this.pointsModel.getOffersByType();
+    this.listPoints = this.pointsModel.points;
+    this.destinations = this.pointsModel.destinations;
+    this.offersByType = this.pointsModel.offersByType;
 
 
     render(new ListFilterView(), container);
     render(new ListSortView(), this.boardContainer);
     render(this.tripListComponent, this.boardContainer);
 
-    render(new EditPointView({ point: this.listPoints[0] , allOffers: this.offersByType, destinations:  this.destinations }), this.tripListComponent.getElement());
+    render(new EditPointView({ point: this.listPoints[0] , allOffers: this.offersByType, destinations:  this.destinations }),
+      this.tripListComponent.getElement());
 
     this.listPoints.forEach((listPoint) => {
-
-
-      render(new ListItemView({ point: listPoint, allOffers: this.offersByType, destinations:  this.destinations}), this.tripListComponent.getElement());
+      render(new ListItemView({ point: listPoint, allOffers: this.offersByType, destinations:  this.destinations}),
+        this.tripListComponent.getElement());
     });
   }
 }
