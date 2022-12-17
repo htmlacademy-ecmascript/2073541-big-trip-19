@@ -58,7 +58,8 @@ function createListItemTemplate(point, allOffers, destinations) {
   );
 }
 
-export default class ListItemView {
+export default class PointView {
+  #element = null;
 
   constructor({ point, allOffers, destinations }) {
     this.point = point;
@@ -66,19 +67,19 @@ export default class ListItemView {
     this.destinations = destinations;
   }
 
-  getTemplate() {
+  get template() {
     return createListItemTemplate(this.point, this.allOffers, this.destinations);
   }
 
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
+  get element() {
+    if (!this.#element) {
+      this.#element = createElement(this.template);
     }
 
-    return this.element;
+    return this.#element;
   }
 
   removeElement() {
-    this.element = null;
+    this.#element = null;
   }
 }

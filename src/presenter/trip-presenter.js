@@ -1,36 +1,35 @@
 import EditPointView from '../view/edit-point-view.js';
-import ListItemView from '../view/point-view.js';
+import PointView from '../view/point-view.js';
 import ListFilterView from '../view/list-filter-view.js';
 import ListSortView from '../view/list-sort-view.js';
 import ListView from '../view/list-view.js';
-
+import { isEscKey } from '../utils.js';
 import {render} from '../render.js';
 
 
 export default class TripPresenter {
-  tripListComponent = new ListView();
+  #pointListContainer = new ListView();
 
-  constructor({ boardContainer, pointsModel }) {
-    this.boardContainer = boardContainer;
+  constructor({ pointsContainer, pointsModel }) {
+    this.pointsContainer = pointsContainer;
     this.pointsModel = pointsModel;
   }
+
 
   init(container) {
     this.listPoints = this.pointsModel.points;
     this.destinations = this.pointsModel.destinations;
     this.offersByType = this.pointsModel.offersByType;
 
-
     render(new ListFilterView(), container);
-    render(new ListSortView(), this.boardContainer);
-    render(this.tripListComponent, this.boardContainer);
-
+    render(new ListSortView(), this.pointsContainer);
+    render(this.#pointListContainer, this.pointsContainer);
     render(new EditPointView({ point: this.listPoints[0] , allOffers: this.offersByType, destinations:  this.destinations }),
-      this.tripListComponent.getElement());
+      this.#pointListContainer.element);
 
     this.listPoints.forEach((listPoint) => {
-      render(new ListItemView({ point: listPoint, allOffers: this.offersByType, destinations:  this.destinations}),
-        this.tripListComponent.getElement());
+      render(new PointView({ point: listPoint, allOffers: this.offersByType, destinations: this.destinations}),
+        this.#pointListContainer.element);
     });
   }
 }

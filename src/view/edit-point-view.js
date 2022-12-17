@@ -103,6 +103,7 @@ function createEditPointTemplate (point, allOffers, destinations ) {
   );
 }
 export default class EditPointView {
+  #element = null;
 
   constructor({ point, allOffers, destinations }) {
     this.point = point;
@@ -110,19 +111,19 @@ export default class EditPointView {
     this.destinations = destinations;
   }
 
-  getTemplate() {
+  get template() {
     return createEditPointTemplate(this.point, this.allOffers, this.destinations);
   }
 
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
+  get element() {
+    if (!this.#element) {
+      this.#element = createElement(this.template);
     }
 
-    return this.element;
+    return this.#element;
   }
 
   removeElement() {
-    this.element = null;
+    this.#element = null;
   }
 }
