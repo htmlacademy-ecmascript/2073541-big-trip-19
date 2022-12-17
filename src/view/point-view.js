@@ -60,15 +60,18 @@ function createListItemTemplate(point, allOffers, destinations) {
 
 export default class PointView {
   #element = null;
+  #point = null;
+  #allOffers = null;
+  #destinations = null;
 
-  constructor({ point, allOffers, destinations }) {
-    this.point = point;
-    this.allOffers = allOffers;
-    this.destinations = destinations;
+  constructor({point, allOffers, destinations}) {
+    this.#point = point;
+    this.#allOffers = allOffers;
+    this.#destinations = destinations;
   }
 
   get template() {
-    return createListItemTemplate(this.point, this.allOffers, this.destinations);
+    return createListItemTemplate(this.#point, this.#allOffers, this.#destinations);
   }
 
   get element() {

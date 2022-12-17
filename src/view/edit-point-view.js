@@ -32,7 +32,6 @@ function createEditPointTemplate (point, allOffers, destinations ) {
    `).join('');
   const destinationsList = destinations.map((item) => `<option value="${item.name}"></option>`).join('');
 
-
   return (
     `<li class="trip-events__item">
       <form class="event event--edit" action="#" method="post">
@@ -104,15 +103,18 @@ function createEditPointTemplate (point, allOffers, destinations ) {
 }
 export default class EditPointView {
   #element = null;
+  #point = null;
+  #allOffers = null;
+  #destinations = null;
 
   constructor({ point, allOffers, destinations }) {
-    this.point = point;
-    this.allOffers = allOffers;
-    this.destinations = destinations;
+    this.#point = point;
+    this.#allOffers = allOffers;
+    this.#destinations = destinations;
   }
 
   get template() {
-    return createEditPointTemplate(this.point, this.allOffers, this.destinations);
+    return createEditPointTemplate(this.#point, this.#allOffers, this.#destinations);
   }
 
   get element() {
