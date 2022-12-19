@@ -1,8 +1,8 @@
 import { createElement } from '../render.js';
-import { tripEventMessages } from './const';
+import { TRIP_EVENT_MESSAGES } from '../const';
 
 function createEmptyListTemplate() {
-  return `<p class="trip-events__msg">${tripEventMessages.everything}</p>`;
+  return `<p class="trip-events__msg">${TRIP_EVENT_MESSAGES.everything}</p>`;
 }
 
 export default class EmptyListView {
