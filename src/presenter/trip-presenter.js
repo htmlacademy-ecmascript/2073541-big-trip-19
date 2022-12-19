@@ -39,6 +39,7 @@ export default class TripPresenter {
         document.removeEventListener('keydown', escKeyDownHandler);
       }
     };
+
     pointComponent.element.querySelector('.event__rollup-btn').addEventListener('click', () => {
       replaceCardToForm();
       document.addEventListener('keydown', escKeyDownHandler);
@@ -66,6 +67,7 @@ export default class TripPresenter {
     render(new ListFilterView(), container);
     render(new ListSortView(), this.#pointsContainer);
     render(this.#pointListContainer, this.#pointsContainer);
+
     this.#listPoints.forEach((listPoint) =>
       this.#renderPoint(listPoint, this.#offersByType, this.#destinations));
   }

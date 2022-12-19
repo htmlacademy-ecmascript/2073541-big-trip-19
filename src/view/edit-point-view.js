@@ -14,7 +14,8 @@ function createEditPointTemplate (point, allOffers, destinations ) {
   const offersTemplate = pointOffers.map((offer) =>
     `<div class="event__available-offers">
       <div class="event__offer-selector">
-        <input class="event__offer-checkbox  visually-hidden" id="event-offer-luggage-1" type="checkbox"
+        <input class="event__offer-checkbox  visually-hidden"
+          id="event-offer-luggage-1" type="checkbox"
           name=${offer.title} ${offers.includes(offer.id) ? 'checked' : ''}>
         <label class="event__offer-label" for="event-offer-luggage-1">
           <span class="event__offer-title">${offer.title}</span>
@@ -25,10 +26,12 @@ function createEditPointTemplate (point, allOffers, destinations ) {
 
   const typesList = allOffers.map((offer) =>
     `<div class="event__type-item">
-     <input id="event-type-${offer.type}-${offer.id}" class="event__type-input  visually-hidden" type="radio"
-      name="event-type" value="${offer.type}">
-     <label class="event__type-label  event__type-label--${offer.type}" for="event-type-${offer.type}-${offer.id}">${offer.type}</label>
-   </div>
+      <input id="event-type-${offer.type}-${offer.id}"
+        class="event__type-input  visually-hidden" type="radio"
+        name="event-type" value="${offer.type}">
+      <label class="event__type-label  event__type-label--${offer.type}"
+        for="event-type-${offer.type}-${offer.id}">${offer.type}</label>
+    </div>
    `).join('');
   const destinationsList = destinations.map((item) => `<option value="${item.name}"></option>`).join('');
 
