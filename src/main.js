@@ -8,6 +8,6 @@ const tripEventsElement = document.querySelector('.trip-events');
 const pointsModel = new PointsModel();
 
 const tripPresenter = new TripPresenter({
-  boardContainer: tripEventsElement, pointsModel
+  pointsContainer: tripEventsElement, pointsModel
 });
 tripPresenter.init(headerElement);

@@ -1,13 +1,16 @@
 import { createElement } from '../render.js';
+import { TRIP_EVENT_MESSAGES } from '../const';
 
-function createListTemplate() {
-  return '<ul class="trip-events__list"></ul>';
+function createEmptyListTemplate() {
+  return `<p class="trip-events__msg">${TRIP_EVENT_MESSAGES.everything}</p>`;
 }
 
-export default class ListView {
+export default class EmptyListView {
+
   #element = null;
+
   get template() {
-    return createListTemplate();
+    return createEmptyListTemplate();
   }
 
   get element() {

@@ -58,27 +58,31 @@ function createListItemTemplate(point, allOffers, destinations) {
   );
 }
 
-export default class ListItemView {
+export default class PointView {
+  #element = null;
+  #point = null;
+  #allOffers = null;
+  #destinations = null;
 
-  constructor({ point, allOffers, destinations }) {
-    this.point = point;
-    this.allOffers = allOffers;
-    this.destinations = destinations;
+  constructor({point, allOffers, destinations}) {
+    this.#point = point;
+    this.#allOffers = allOffers;
+    this.#destinations = destinations;
   }
 
-  getTemplate() {
-    return createListItemTemplate(this.point, this.allOffers, this.destinations);
+  get template() {
+    return createListItemTemplate(this.#point, this.#allOffers, this.#destinations);
   }
 
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
+  get element() {
+    if (!this.#element) {
+      this.#element = createElement(this.template);
     }
 
-    return this.element;
+    return this.#element;
   }
 
   removeElement() {
-    this.element = null;
+    this.#element = null;
   }
 }
