@@ -22,7 +22,7 @@ const getEventDuration = (start, finish) => {
   if(differenceInHours < 1) {
     durationFormat = 'mm[M]';
   }
-  if (differenceInHours >= 1 && differenceInHours < 24 ) {
+  if (differenceInHours >= 1 && differenceInHours < 24) {
     durationFormat = 'HH[H] mm[M]';
   }
   const eventDuration = dayjs.duration(differenceInMs).format(durationFormat);
