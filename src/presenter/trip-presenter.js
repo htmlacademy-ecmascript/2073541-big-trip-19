@@ -72,14 +72,15 @@ export default class TripPresenter {
 
     if (!this.#listPoints.length) {
       this.#renderEmptyList();
-    } else {
-      render(new ListFilterView(), container);
-      render(new ListSortView(), this.#pointsContainer);
-      render(this.#pointListContainer, this.#pointsContainer);
-
-      this.#listPoints.forEach((listPoint) =>
-        this.#renderPoint(listPoint, this.#offersByType, this.#destinations));
+      return;
     }
+    render(new ListFilterView(), container);
+    render(new ListSortView(), this.#pointsContainer);
+    render(this.#pointListContainer, this.#pointsContainer);
+
+    this.#listPoints.forEach((listPoint) =>
+      this.#renderPoint(listPoint, this.#offersByType, this.#destinations));
+
   }
 }
 
