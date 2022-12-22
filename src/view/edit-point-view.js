@@ -1,4 +1,4 @@
-import {createElement} from '../render.js';
+import AbstractView from '../framework/view/abstract-view.js';
 import dayjs from 'dayjs';
 
 
@@ -104,13 +104,14 @@ function createEditPointTemplate (point, allOffers, destinations ) {
     </li>`
   );
 }
-export default class EditPointView {
-  #element = null;
+export default class EditPointView extends AbstractView {
+
   #point = null;
   #allOffers = null;
   #destinations = null;
 
   constructor({ point, allOffers, destinations }) {
+    super();
     this.#point = point;
     this.#allOffers = allOffers;
     this.#destinations = destinations;
@@ -120,15 +121,4 @@ export default class EditPointView {
     return createEditPointTemplate(this.#point, this.#allOffers, this.#destinations);
   }
 
-  get element() {
-    if (!this.#element) {
-      this.#element = createElement(this.template);
-    }
-
-    return this.#element;
-  }
-
-  removeElement() {
-    this.#element = null;
-  }
 }
