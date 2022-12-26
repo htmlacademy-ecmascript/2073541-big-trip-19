@@ -1,4 +1,4 @@
-import {createElement} from '../render.js';
+import AbstractView from '../framework/view/abstract-view.js';
 import dayjs from 'dayjs';
 import {getEventDuration} from '../utils.js';
 
@@ -58,31 +58,29 @@ function createListItemTemplate(point, allOffers, destinations) {
   );
 }
 
-export default class PointView {
-  #element = null;
+export default class PointView extends AbstractView {
+
   #point = null;
   #allOffers = null;
   #destinations = null;
+  #handleEditClick = null;
 
-  constructor({point, allOffers, destinations}) {
+  constructor({point, allOffers, destinations, onEditClick}) {
+    super();
     this.#point = point;
     this.#allOffers = allOffers;
     this.#destinations = destinations;
+    this.#handleEditClick = onEditClick;
+    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#editClickHandler);
   }
 
   get template() {
     return createListItemTemplate(this.#point, this.#allOffers, this.#destinations);
   }
 
-  get element() {
-    if (!this.#element) {
-      this.#element = createElement(this.template);
-    }
+  #editClickHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleEditClick();
+  };
 
-    return this.#element;
-  }
-
-  removeElement() {
-    this.#element = null;
-  }
 }

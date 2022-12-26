@@ -32,7 +32,7 @@ const getRandomEndDate = () => dayjs()
 const destinations = [
   {
     id: 1,
-    description: getRandomArrayElement(DESCRIPTIONS),
+    description: '',
     name: 'Geneva',
     pictures: [{
       src: getPictures(),

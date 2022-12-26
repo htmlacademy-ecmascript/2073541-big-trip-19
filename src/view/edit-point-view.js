@@ -1,4 +1,4 @@
-import {createElement} from '../render.js';
+import AbstractView from '../framework/view/abstract-view.js';
 import dayjs from 'dayjs';
 
 
@@ -15,9 +15,9 @@ function createEditPointTemplate (point, allOffers, destinations ) {
     `<div class="event__available-offers">
       <div class="event__offer-selector">
         <input class="event__offer-checkbox  visually-hidden"
-          id="event-offer-luggage-1" type="checkbox"
+          id="event-offer-${offer.type}-${offer.id}" type="checkbox"
           name=${offer.title} ${offers.includes(offer.id) ? 'checked' : ''}>
-        <label class="event__offer-label" for="event-offer-luggage-1">
+        <label class="event__offer-label" for="event-offer-${offer.type}-${offer.id}">
           <span class="event__offer-title">${offer.title}</span>
           &plus;&euro;&nbsp;
           <span class="event__offer-price">${offer.price}</span>
@@ -91,44 +91,53 @@ function createEditPointTemplate (point, allOffers, destinations ) {
         </header>
         <section class="event__details">
           <section class="event__section  event__section--offers">
-            <h3 class="event__section-title  event__section-title--offers">Offers</h3>
-            ${offersTemplate}
-          </section>
-
+            ${pointOffers.length ?
+      `<h3 class="event__section-title  event__section-title--offers">Offers</h3>
+            ${offersTemplate}</section>`
+      : ''}
           <section class="event__section  event__section--destination">
-            <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-            <p class="event__destination-description">${pointDestination.description}</p>
-          </section>
+          ${pointDestination.description ?
+      `<h3 class="event__section-title  event__section-title--destination">Destination</h3>
+           <p class="event__destination-description">${pointDestination.description}</p>
+         </section>`
+      : ''}
+
         </section>
       </form>
     </li>`
   );
 }
-export default class EditPointView {
-  #element = null;
+export default class EditPointView extends AbstractView {
+
   #point = null;
   #allOffers = null;
   #destinations = null;
+  #handleFormSubmit = null;
+  #handleEditClick = null;
 
-  constructor({ point, allOffers, destinations }) {
+  constructor({ point, allOffers, destinations, onFormSubmit, onEditClick}) {
+    super();
     this.#point = point;
     this.#allOffers = allOffers;
     this.#destinations = destinations;
+    this.#handleFormSubmit = onFormSubmit;
+    this.#handleEditClick = onEditClick;
+    this.element.querySelector('form').addEventListener('submit', this.#formSubmitHandler);
+    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#editBtnHandler);
   }
 
   get template() {
     return createEditPointTemplate(this.#point, this.#allOffers, this.#destinations);
   }
 
-  get element() {
-    if (!this.#element) {
-      this.#element = createElement(this.template);
-    }
+  #formSubmitHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleFormSubmit();
+  };
 
-    return this.#element;
-  }
+  #editBtnHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleEditClick();
+  };
 
-  removeElement() {
-    this.#element = null;
-  }
 }
