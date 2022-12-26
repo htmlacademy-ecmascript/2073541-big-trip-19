@@ -12,7 +12,7 @@ export default class TripPresenter {
   #pointListContainer = new ListView();
   #pointsContainer = null;
   #pointsModel = null;
-  #listPoints = null;
+  #pointsList = null;
   #destinations = null;
   #offersByType = null;
 
@@ -23,7 +23,8 @@ export default class TripPresenter {
 
   #renderPoint(point, allOffers, destinations) {
 
-    const pointComponent = new PointView({ point,
+    const pointComponent = new PointView({
+      point,
       allOffers,
       destinations,
       onEditClick: () => {
@@ -31,7 +32,9 @@ export default class TripPresenter {
         document.addEventListener('keydown', escKeyDownHandler);
       }
     });
-    const pointEditComponent = new EditPointView({ point,
+
+    const pointEditComponent = new EditPointView({
+      point,
       allOffers,
       destinations,
       onFormSubmit:() => {
@@ -67,13 +70,18 @@ export default class TripPresenter {
     render(new EmptyListView(), this.#pointsContainer);
   }
 
+  #renderPoints() {
+    this.#pointsList.forEach((listPoint) =>
+      this.#renderPoint(listPoint, this.#offersByType, this.#destinations));
+  }
+
 
   init(container) {
-    this.#listPoints = this.#pointsModel.points;
+    this.#pointsList = this.#pointsModel.points;
     this.#destinations = this.#pointsModel.destinations;
     this.#offersByType = this.#pointsModel.offersByType;
 
-    if (!this.#listPoints.length) {
+    if (!this.#pointsList.length) {
       this.#renderEmptyList();
       return;
     }
@@ -81,9 +89,7 @@ export default class TripPresenter {
     render(new ListSortView(), this.#pointsContainer);
     render(this.#pointListContainer, this.#pointsContainer);
 
-    this.#listPoints.forEach((listPoint) =>
-      this.#renderPoint(listPoint, this.#offersByType, this.#destinations));
-
+    this.#renderPoints();
   }
 }
 
