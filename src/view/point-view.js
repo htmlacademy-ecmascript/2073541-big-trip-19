@@ -1,6 +1,6 @@
 import AbstractView from '../framework/view/abstract-view.js';
 import dayjs from 'dayjs';
-import {getEventDuration} from '../utils.js';
+import {getEventDuration} from '../utils/utils.js';
 
 
 function createListItemTemplate(point, allOffers, destinations) {
