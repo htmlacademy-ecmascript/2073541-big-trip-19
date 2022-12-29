@@ -1,13 +1,13 @@
-import { filter } from '../utils/filters.js';
+import { getFilteredEvents } from '../utils/filters.js';
 
 function generateFilter(points) {
-  return Object.entries(filter).map(
+  return Object.entries(getFilteredEvents(points)).map(
     ([filterName, filteredPoints]) => ({
       name: filterName,
-      filteredPoints: filteredPoints(points)
+      count: filteredPoints.length
     })
   );
 }
 
-
 export { generateFilter };
+
