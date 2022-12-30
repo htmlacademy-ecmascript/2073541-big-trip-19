@@ -4,8 +4,9 @@ import ListFilterView from '../view/list-filter-view.js';
 import ListSortView from '../view/list-sort-view.js';
 import ListView from '../view/list-view.js';
 import EmptyListView from '../view/empty-list-view.js';
-import { isEscKey } from '../utils.js';
+import { isEscKey } from '../utils/utils.js';
 import { render, replace } from '../framework/render.js';
+import { generateFilter } from '../mock/filter.js';
 
 
 export default class TripPresenter {
@@ -80,16 +81,17 @@ export default class TripPresenter {
     this.#pointsList = this.#pointsModel.points;
     this.#destinations = this.#pointsModel.destinations;
     this.#offersByType = this.#pointsModel.offersByType;
+    const filters = generateFilter(this.#pointsList);
 
     if (!this.#pointsList.length) {
       this.#renderEmptyList();
       return;
     }
-    render(new ListFilterView(), container);
+
+    render(new ListFilterView({ filters }), container);
     render(new ListSortView(), this.#pointsContainer);
     render(this.#pointListContainer, this.#pointsContainer);
 
     this.#renderPoints();
   }
 }
-

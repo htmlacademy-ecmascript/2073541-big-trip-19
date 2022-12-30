@@ -1,5 +1,5 @@
 
-import { getRandomArrayElement, getRandomInt } from '../utils.js';
+import { getRandomArrayElement, getRandomInt } from '../utils/utils.js';
 import dayjs from 'dayjs';
 
 
@@ -150,8 +150,8 @@ const offersByType = [
 const mockPoints = [
   {
     basePrice: getRandomInt(100, 1000),
-    dateFrom: getRandomStartDate(),
-    dateTo: getRandomEndDate(),
+    dateFrom: '2019-07-10T22:55:56.845Z',
+    dateTo: '2019-07-11T22:55:56.845Z',
     destination: [1],
     id: '1',
     isFavorite: Boolean(getRandomInt(1, 2)),
@@ -161,7 +161,7 @@ const mockPoints = [
   {
     basePrice: getRandomInt(100, 1000),
     dateFrom: getRandomStartDate(),
-    dateTo: getRandomEndDate(),
+    dateTo:  getRandomEndDate(),
     destination: [2],
     id: '2',
     isFavorite: Boolean(getRandomInt(0, 1)),
@@ -225,5 +225,4 @@ const points = shuffle(mockPoints);
 
 
 export{ points, destinations, offersByType };
-
 
