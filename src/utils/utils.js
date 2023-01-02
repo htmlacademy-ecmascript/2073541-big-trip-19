@@ -32,6 +32,10 @@ const getEventDuration = (start, finish) => {
 
 const isEscKey = (evt) => evt.key === 'Escape' || evt.key === 'Esc';
 
+function updateItem(items, update) {
+  return items.map((item) => item.id === update.id ? update : item);
+}
 
-export { getRandomArrayElement, getRandomInt, getEventDuration, isEscKey };
+
+export { getRandomArrayElement, getRandomInt, getEventDuration, isEscKey, updateItem };
 

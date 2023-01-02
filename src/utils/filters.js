@@ -13,6 +13,13 @@ const isPresentEvent = (dateFrom, dateTo) => !isStartDateExpired(dateFrom) && is
 const isPastEvent = (dateFrom, dateTo) => !isStartDateExpired(dateFrom) && !isEndDateExpired(dateTo);
 
 
+const filter = {
+  [FilterType.EVERYTHING]: (points) => points,
+  [FilterType.FUTURE]: (points) => points.filter((point) => isFutureEvent(point.dateFrom, point.dateTo)),
+  [FilterType.PRESENT]: (points) => points.filter((point) => isPresentEvent(point.dateFrom, point.dateTo)),
+  [FilterType.PAST]: (points) => points.filter((point) => isPastEvent(point.dateFrom, point.dateTo)),
+};
+
 function getFilteredEvents(points) {
   const pointsByFilter = {
     [FilterType.EVERYTHING]: points,
@@ -34,4 +41,4 @@ function getFilteredEvents(points) {
   return pointsByFilter;
 }
 
-export { getFilteredEvents };
+export { getFilteredEvents, filter };
