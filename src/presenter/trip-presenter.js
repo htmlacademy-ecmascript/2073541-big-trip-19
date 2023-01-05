@@ -1,11 +1,13 @@
-import ListFilterView from '../view/list-filter-view.js';
-import ListSortView from '../view/list-sort-view.js';
+import FilterView from '../view/filter-view.js';
+import SortView from '../view/sort-view.js';
 import ListView from '../view/list-view.js';
 import EmptyListView from '../view/empty-list-view.js';
 import { updateItem } from '../utils/utils.js';
+import { sortPointDate, sortPointTime, sortPointPrice } from '../utils/filters.js';
 import { render } from '../framework/render.js';
 import { generateFilter } from '../mock/filter.js';
 import PointPresenter from './point-presenter.js';
+import {SortType} from '../const.js';
 
 
 export default class TripPresenter {
@@ -17,6 +19,8 @@ export default class TripPresenter {
   #destinations = null;
   #allOffers = null;
   #pointPresenterMap = new Map();
+  #currentSortType = SortType.DAY;
+  #sortComponent = null;
 
   constructor({ pointsContainer, pointsModel }) {
     this.#pointsContainer = pointsContainer;
@@ -50,13 +54,15 @@ export default class TripPresenter {
       this.#renderPoint(listPoint, this.#allOffers, this.#destinations));
   }
 
+  #renderSort() {
+    this.#sortComponent = new SortView({ onSortTypeChange: this.#handleSortTypeChange });
+    render(this.#sortComponent, this.#pointsContainer);
+  }
+
+
   #handleModeChange = () => {
     this.#pointPresenterMap.forEach((presenter) => presenter.resetView());
   };
-
-  //function updateItem(items, update) {
-  //  return items.map((item) => item.id === update.id ? update : item);
-  //}
 
   #handlePointChange = (updatedPoint) => {
     this.#pointsList = updateItem(this.#pointsList, updatedPoint);
@@ -64,17 +70,48 @@ export default class TripPresenter {
     this.#pointPresenterMap.get(updatedPoint.id).init(updatedPoint, this.#allOffers, this.#destinations );
   };
 
+  #handleSortTypeChange = (sortType) => {
+    if (this.#currentSortType === sortType) {
+      return;
+    }
+    this.#sortPoints(sortType);
+    this.#clearPointList();
+    this.#renderPoints();
+  };
+
+  #sortPoints(sortType) {
+    switch (sortType) {
+      case SortType.DAY:
+        this.#pointsList.sort(sortPointDate);
+        break;
+      case SortType.TIME:
+        this.#pointsList.sort(sortPointTime);
+        break;
+      case SortType.PRICE:
+        this.#pointsList.sort(sortPointPrice);
+        break;
+      default:
+        this.#pointsList.sort(sortPointDate);
+    }
+    this.#currentSortType = sortType;
+  }
+
+  #clearPointList() {
+    this.#pointPresenterMap.forEach((presenter) => presenter.destroy());
+    this.#pointPresenterMap.clear();
+  }
+
 
   init(container) {
-    this.#pointsList = [...this.#pointsModel.points];
+    this.#pointsList = this.#pointsModel.points.sort(sortPointDate);
     this.#sourcedPointsList = [...this.#pointsModel.points];
     this.#destinations = [...this.#pointsModel.destinations];
     this.#allOffers = [...this.#pointsModel.offersByType];
     const filters = generateFilter(this.#pointsList);
 
 
-    render(new ListFilterView({ filters }), container);
-    render(new ListSortView(), this.#pointsContainer);
+    render(new FilterView({ filters }), container);
+    this.#renderSort();
     render(this.#pointListContainer, this.#pointsContainer);
 
     this.#renderPoints();

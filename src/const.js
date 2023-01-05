@@ -12,5 +12,13 @@ const FilterType = {
   PAST: 'past',
 };
 
+const SortType = {
+  DAY: 'day',
+  EVENT: 'event',
+  TIME: 'time',
+  PRICE: 'price',
+  OFFERS: 'offers',
+};
 
-export { EMPTY_LIST_MESSAGES, FilterType };
+
+export { EMPTY_LIST_MESSAGES, FilterType, SortType };
