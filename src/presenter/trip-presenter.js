@@ -55,7 +55,7 @@ export default class TripPresenter {
   }
 
   #renderSort() {
-    this.#sortComponent = new SortView({ onSortTypeChange: this.#handleSortTypeChange });
+    this.#sortComponent = new SortView({ onSortTypeChange: this.#handleSortTypeChange, currentSortType: this.#currentSortType });
     render(this.#sortComponent, this.#pointsContainer);
   }
 
@@ -74,6 +74,7 @@ export default class TripPresenter {
     if (this.#currentSortType === sortType) {
       return;
     }
+
     this.#sortPoints(sortType);
     this.#clearPointList();
     this.#renderPoints();
@@ -91,8 +92,9 @@ export default class TripPresenter {
         this.#pointsList.sort(sortPointPrice);
         break;
       default:
-        this.#pointsList.sort(sortPointDate);
+        throw new Error(`Unknown sort type: '${sortType}'`);
     }
+
     this.#currentSortType = sortType;
   }
 
@@ -103,8 +105,8 @@ export default class TripPresenter {
 
 
   init(container) {
-    this.#pointsList = this.#pointsModel.points.sort(sortPointDate);
-    this.#sourcedPointsList = [...this.#pointsModel.points];
+    this.#pointsList = [...this.#pointsModel.points];
+    this.#sourcedPointsList = this.#pointsList.sort(sortPointDate);
     this.#destinations = [...this.#pointsModel.destinations];
     this.#allOffers = [...this.#pointsModel.offersByType];
     const filters = generateFilter(this.#pointsList);
