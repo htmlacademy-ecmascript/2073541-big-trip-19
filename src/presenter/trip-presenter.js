@@ -119,3 +119,4 @@ export default class TripPresenter {
     this.#renderPoints();
   }
 }
+
