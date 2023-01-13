@@ -1,11 +1,13 @@
-import AbstractView from '../framework/view/abstract-view.js';
 import dayjs from 'dayjs';
+import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 
 
 function createEditPointTemplate (point, allOffers, destinations ) {
   const { type, dateFrom, dateTo, basePrice, destination, offers} = point;
 
   const pointDestination = destinations.find((item) => destination.includes(item.id));
+  const { pictures } = pointDestination;
+
   const pointOfferByType = allOffers.find((offer) => offer.type === type);
 
   const pointOffers = pointOfferByType.offers;
@@ -15,9 +17,9 @@ function createEditPointTemplate (point, allOffers, destinations ) {
     `<div class="event__available-offers">
       <div class="event__offer-selector">
         <input class="event__offer-checkbox  visually-hidden"
-          id="event-offer-${offer.type}-${offer.id}" type="checkbox"
+          id="event-offer-${offer.id}" type="checkbox"
           name=${offer.title} ${offers.includes(offer.id) ? 'checked' : ''}>
-        <label class="event__offer-label" for="event-offer-${offer.type}-${offer.id}">
+        <label class="event__offer-label" for="event-offer-${offer.id}">
           <span class="event__offer-title">${offer.title}</span>
           &plus;&euro;&nbsp;
           <span class="event__offer-price">${offer.price}</span>
@@ -99,21 +101,28 @@ function createEditPointTemplate (point, allOffers, destinations ) {
           ${pointDestination.description ?
       `<h3 class="event__section-title  event__section-title--destination">Destination</h3>
            <p class="event__destination-description">${pointDestination.description}</p>
+
          </section>`
       : ''}
+      <div class="event__photos-container">
+      <div class="event__photos-tape">
+        ${pictures.map(({ src, description }) => `<img class="event__photo" src="${src}.jpg" alt="${description}">`).join('')}
+      </div>
+    </div>
 
         </section>
       </form>
     </li>`
   );
 }
-export default class EditPointView extends AbstractView {
+export default class EditPointView extends AbstractStatefulView {
 
   #point = null;
   #allOffers = null;
   #destinations = null;
   #handleFormSubmit = null;
   #handleEditClick = null;
+
 
   constructor({ point, allOffers, destinations, onFormSubmit, onEditClick}) {
     super();
@@ -122,22 +131,89 @@ export default class EditPointView extends AbstractView {
     this.#destinations = destinations;
     this.#handleFormSubmit = onFormSubmit;
     this.#handleEditClick = onEditClick;
-    this.element.querySelector('form').addEventListener('submit', this.#formSubmitHandler);
-    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#editBtnHandler);
+    this._setState(EditPointView.parsePointToState(point));
+    this.#setInnerHandlers();
+
   }
 
   get template() {
-    return createEditPointTemplate(this.#point, this.#allOffers, this.#destinations);
+    return createEditPointTemplate(this._state, this.#allOffers, this.#destinations);
   }
+
+  static parsePointToState = (point) => ({ ...point });
+
+  static parseStateToPoint = (state) => ({ ...state });
 
   #formSubmitHandler = (evt) => {
     evt.preventDefault();
-    this.#handleFormSubmit();
+    this.#handleFormSubmit(EditPointView.parseStateToPoint(this._state));
   };
 
   #editBtnHandler = (evt) => {
     evt.preventDefault();
     this.#handleEditClick();
+  };
+
+  #pointTypeChangeHandler = (evt) => {
+    evt.preventDefault();
+
+    if (evt.target.tagName === 'INPUT') {
+      this.updateElement({
+        type: evt.target.value,
+        offers: []
+      });
+    }
+  };
+
+
+  #destinationChangeHandler = (evt) => {
+    evt.preventDefault();
+
+    if (!evt.target.value) {
+      this.updateElement({
+        destination: ''
+      });
+      return;
+    }
+    const selectedDestination = this.#destinations
+      .find((destination) => evt.target.value === destination.name);
+
+    this.updateElement({
+      destination: [selectedDestination.id]
+    });
+  };
+
+  #offerChangeHandler = (evt) => {
+    evt.preventDefault();
+
+    if (evt.target.tagName === 'INPUT') {
+      const currentOfferId = parseInt((evt.target.id).replace(/[^\d]/g, ''), 10);
+      const currentOfferIndex = this._state.offers.indexOf(currentOfferId);
+
+      if (currentOfferIndex === -1) {
+        this._setState(this._state.offers.push(currentOfferId));
+
+        return;
+      }
+
+      this._state.offers.splice(currentOfferIndex, 1);
+    }
+  };
+
+  #setInnerHandlers = () => {
+    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#editBtnHandler);
+    this.element.querySelector('.event--edit').addEventListener('submit', this.#formSubmitHandler);
+    this.element.querySelector('.event__type-group').addEventListener('change', this.#pointTypeChangeHandler);
+    this.element.querySelector('.event__input--destination').addEventListener('change', this.#destinationChangeHandler);
+    this.element.querySelector('.event__available-offers')?.addEventListener('change', this.#offerChangeHandler);
+  };
+
+  _restoreHandlers = () => {
+    this.#setInnerHandlers();
+  };
+
+  reset = (point) => {
+    this.updateElement(EditPointView.parsePointToState(point));
   };
 
 }
