@@ -70,6 +70,7 @@ export default class PointPresenter {
 
   resetView() {
     if (this.#mode !== Mode.DEFAULT) {
+      this.#pointEditComponent.reset(this.#point);
       this.#replaceFormToCard();
     }
   }
@@ -77,6 +78,7 @@ export default class PointPresenter {
   #escKeyDownHandler = (evt) => {
     if (isEscKey(evt)) {
       evt.preventDefault();
+      this.#pointEditComponent.reset(this.#point);
       this.#replaceFormToCard();
     }
   };
@@ -85,11 +87,13 @@ export default class PointPresenter {
     this.#replaceCardToForm();
   };
 
-  #handleFormSubmit = () => {
+  #handleFormSubmit = (point) => {
+    this.#handleDataChange(point);
     this.#replaceFormToCard();
   };
 
   #handleRollupClick = () => {
+    this.#pointEditComponent.reset(this.#point);
     this.#replaceFormToCard();
   };
 

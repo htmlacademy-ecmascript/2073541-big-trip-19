@@ -34,5 +34,8 @@ const isEscKey = (evt) => evt.key === 'Escape' || evt.key === 'Esc';
 
 const updateItem = (items, update) => items.map((item) => item.id === update.id ? update : item);
 
-export { getRandomArrayElement, getRandomInt, getEventDuration, isEscKey, updateItem };
+const capitalizeFirstLetter = (string) => string.charAt(0).toUpperCase() + string.slice(1);
+
+
+export { getRandomArrayElement, getRandomInt, getEventDuration, isEscKey, updateItem, capitalizeFirstLetter };
 

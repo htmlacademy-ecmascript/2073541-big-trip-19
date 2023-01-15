@@ -23,11 +23,13 @@ const getPictures = () => {
 };
 const getRandomStartDate = () => dayjs()
   .subtract(getRandomInt(1, 24), 'h')
-  .add(getRandomInt(1, 60), 'm');
+  .add(getRandomInt(1, 60), 'm')
+  .toString();
 
 const getRandomEndDate = () => dayjs()
   .add(getRandomInt(1, 24), 'h')
-  .add(getRandomInt(1, 60), 'm');
+  .add(getRandomInt(1, 60), 'm')
+  .toString();
 
 const destinations = [
   {
