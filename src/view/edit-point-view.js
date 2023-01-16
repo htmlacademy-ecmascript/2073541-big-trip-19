@@ -1,6 +1,9 @@
 import dayjs from 'dayjs';
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import { capitalizeFirstLetter } from '../utils/utils.js';
+import flatpickr from 'flatpickr';
+
+import 'flatpickr/dist/flatpickr.min.css';
 
 
 function createEditPointTemplate (point, allOffers, destinations ) {
@@ -104,14 +107,14 @@ function createEditPointTemplate (point, allOffers, destinations ) {
           ${pointDestination.description ?
       `<h3 class="event__section-title  event__section-title--destination">Destination</h3>
            <p class="event__destination-description">${pointDestination.description}</p>
-
+           <div class="event__photos-container">
+            <div class="event__photos-tape">
+              ${pictures.map(({ src, description }) => `<img class="event__photo" src="${src}.jpg" alt="${description}">`).join('')}
+            </div>
+          </div>
          </section>`
       : ''}
-      <div class="event__photos-container">
-      <div class="event__photos-tape">
-        ${pictures.map(({ src, description }) => `<img class="event__photo" src="${src}.jpg" alt="${description}">`).join('')}
-      </div>
-    </div>
+
 
         </section>
       </form>
@@ -125,6 +128,8 @@ export default class EditPointView extends AbstractStatefulView {
   #destinations = null;
   #handleFormSubmit = null;
   #handleEditClick = null;
+  #datepickerFrom = null;
+  #datepickerTo = null;
 
 
   constructor({ point, allOffers, destinations, onFormSubmit, onEditClick}) {
@@ -205,6 +210,8 @@ export default class EditPointView extends AbstractStatefulView {
     this.element.querySelector('.event__type-group').addEventListener('change', this.#pointTypeChangeHandler);
     this.element.querySelector('.event__input--destination').addEventListener('change', this.#destinationChangeHandler);
     this.element.querySelector('.event__available-offers')?.addEventListener('change', this.#offerChangeHandler);
+    this.#setDateFromPicker();
+    this.#setDateToPicker();
   };
 
   _restoreHandlers = () => {
@@ -213,6 +220,46 @@ export default class EditPointView extends AbstractStatefulView {
 
   reset = (point) => {
     this.updateElement(EditPointView.parsePointToState(point));
+  };
+
+  #dateFromChangeHandler = ([userDate]) => {
+    this.updateElement({
+      dateFrom: userDate
+    });
+  };
+
+  #dateToChangeHandler = ([userDate]) => {
+    this.updateElement({
+      dateTo: userDate
+    });
+  };
+
+  #setDateFromPicker = () => {
+    this.#datepickerFrom = flatpickr(
+      this.element.querySelector('#event-start-time-1'),
+      {
+        enableTime: true,
+        dateFormat: 'd/m/y H:i',
+        minDate: this._state.dateTo,
+        defaultDate: this._state.dateFrom,
+        onChange: this.#dateFromChangeHandler,
+        time24hr: true
+      }
+    );
+  };
+
+  #setDateToPicker = () => {
+    this.#datepickerTo = flatpickr(
+      this.element.querySelector('#event-end-time-1'),
+      {
+        enableTime: true,
+        dateFormat: 'd/m/y H:i',
+        minDate: this._state.dateFrom,
+        defaultDate: this._state.dateTo,
+        onChange: this.#dateToChangeHandler,
+        time24hr: true
+      }
+    );
   };
 
   static parsePointToState = (point) => ({ ...point });
