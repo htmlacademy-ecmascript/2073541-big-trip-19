@@ -36,6 +36,7 @@ const updateItem = (items, update) => items.map((item) => item.id === update.id 
 
 const capitalizeFirstLetter = (string) => string.charAt(0).toUpperCase() + string.slice(1);
 
+const isPositiveInteger = (str) => typeof str === 'string' && Number.isInteger(Number(str)) && Number(str) > 0;
 
-export { getRandomArrayElement, getRandomInt, getEventDuration, isEscKey, updateItem, capitalizeFirstLetter };
+export { getRandomArrayElement, getRandomInt, getEventDuration, isEscKey, updateItem, capitalizeFirstLetter, isPositiveInteger };
 

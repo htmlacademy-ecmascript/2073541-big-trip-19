@@ -20,26 +20,19 @@ const filter = {
   [FilterType.PAST]: (points) => points.filter((point) => isPastEvent(point.dateFrom, point.dateTo)),
 };
 
-const getFilteredEvents = (points) => {
-  const pointsByFilter = {
-    [FilterType.EVERYTHING]: points,
-    [FilterType.FUTURE]: [],
-    [FilterType.PRESENT]: [],
-    [FilterType.PAST]: [],
-  };
-  for (const point of points) {
-    if(isFutureEvent(point.dateFrom, point.dateTo)) {
-      pointsByFilter[FilterType.FUTURE].push(point);
+const getFilteredEvents = (points) => points.reduce((acc, point) => {
+  const filterType = (() => {
+    if (isFutureEvent(point.dateFrom, point.dateTo)) {
+      return FilterType.FUTURE;
+    } else if (isPresentEvent(point.dateFrom, point.dateTo)) {
+      return FilterType.PRESENT;
+    } else if (isPastEvent(point.dateFrom, point.dateTo)) {
+      return FilterType.PAST;
     }
-    if(isPresentEvent(point.dateFrom, point.dateTo)) {
-      pointsByFilter[FilterType.PRESENT].push(point);
-    }
-    if(isPastEvent(point.dateFrom, point.dateTo)) {
-      pointsByFilter[FilterType.PAST].push(point);
-    }
-  }
-  return pointsByFilter;
-};
+  })();
+  acc[filterType].push(point);
+  return acc;
+}, { [FilterType.FUTURE]: [], [FilterType.PRESENT]: [], [FilterType.PAST]: [] });
 
 const sortPointDate = (pointA, pointB) => dayjs(pointA.dateFrom).diff(dayjs(pointB.dateFrom));
 const sortPointTime = (pointA, pointB) => dayjs(pointA.dateTo).diff(pointA.dateFrom) - dayjs(pointB.dateTo).diff(pointB.dateFrom);

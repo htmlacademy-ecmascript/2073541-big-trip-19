@@ -1,6 +1,6 @@
 import dayjs from 'dayjs';
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
-import { capitalizeFirstLetter } from '../utils/utils.js';
+import { capitalizeFirstLetter, isPositiveInteger } from '../utils/utils.js';
 import flatpickr from 'flatpickr';
 
 import 'flatpickr/dist/flatpickr.min.css';
@@ -10,7 +10,8 @@ function createEditPointTemplate (point, allOffers, destinations ) {
   const { type, dateFrom, dateTo, basePrice, destination, offers} = point;
 
   const pointDestination = destinations.find((item) => destination.includes(item.id));
-  const { pictures } = pointDestination;
+
+  const { pictures, name, description } = pointDestination;
 
   const pointOfferByType = allOffers.find((offer) => offer.type === type);
 
@@ -67,7 +68,7 @@ function createEditPointTemplate (point, allOffers, destinations ) {
               ${type}
             </label>
             <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination"
-              value=${pointDestination.name} list="destination-list-1">
+              value=${name} list="destination-list-1">
             <datalist id="destination-list-1">
               ${destinationsList}
             </datalist>
@@ -104,12 +105,12 @@ function createEditPointTemplate (point, allOffers, destinations ) {
             ${offersTemplate}</section>`
       : ''}
           <section class="event__section  event__section--destination">
-          ${pointDestination.description ?
+          ${description ?
       `<h3 class="event__section-title  event__section-title--destination">Destination</h3>
-           <p class="event__destination-description">${pointDestination.description}</p>
+           <p class="event__destination-description">${description}</p>
            <div class="event__photos-container">
             <div class="event__photos-tape">
-              ${pictures.map(({ src, description }) => `<img class="event__photo" src="${src}.jpg" alt="${description}">`).join('')}
+              ${pictures.map(({ src, description: pictureDescription }) => `<img class="event__photo" src="${src}.jpg" alt="${pictureDescription}">`).join('')}
             </div>
           </div>
          </section>`
@@ -173,19 +174,17 @@ export default class EditPointView extends AbstractStatefulView {
   #destinationChangeHandler = (evt) => {
     evt.preventDefault();
 
-    if (!evt.target.value) {
+    if (this.#destinations.some((destination) => destination.name === evt.target.value)) {
+      const selectedDestination = this.#destinations
+        .find((destination) => evt.target.value === destination.name);
+
       this.updateElement({
-        destination: ''
+        destination: [selectedDestination.id]
       });
-      return;
+    } else {
+      console.log('Пункт назначения отсутствует в списке');
     }
 
-    const selectedDestination = this.#destinations
-      .find((destination) => evt.target.value === destination.name);
-
-    this.updateElement({
-      destination: [selectedDestination.id]
-    });
   };
 
   #offerChangeHandler = (evt) => {
@@ -204,12 +203,28 @@ export default class EditPointView extends AbstractStatefulView {
 
   };
 
+  #priceChangeHandler = (evt) => {
+    evt.preventDefault();
+    if(isPositiveInteger(evt.target.value)) {
+      this.updateElement({
+        basePrice: evt.target.value
+      });
+    } else {
+      this.updateElement({
+        basePrice: ''
+      });
+      console.log('Необходимо ввести целое положительное число');
+    }
+
+  };
+
   #setInnerHandlers = () => {
     this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#editBtnHandler);
     this.element.querySelector('.event--edit').addEventListener('submit', this.#formSubmitHandler);
     this.element.querySelector('.event__type-group').addEventListener('change', this.#pointTypeChangeHandler);
     this.element.querySelector('.event__input--destination').addEventListener('change', this.#destinationChangeHandler);
     this.element.querySelector('.event__available-offers')?.addEventListener('change', this.#offerChangeHandler);
+    this.element.querySelector('.event__input--price')?.addEventListener('change', this.#priceChangeHandler);
     this.#setDateFromPicker();
     this.#setDateToPicker();
   };
