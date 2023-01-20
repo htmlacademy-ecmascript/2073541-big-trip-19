@@ -45,12 +45,14 @@ export default class TripPresenter {
   }
 
   #renderPoints() {
-    if (!this.#pointsList.length) {
+    const points = this.points;
+
+    if (!points.length) {
       this.#renderEmptyList();
       return;
     }
 
-    this.#pointsList.forEach((listPoint) =>
+    points.forEach((listPoint) =>
       this.#renderPoint(listPoint, this.#allOffers, this.#destinations));
   }
 
@@ -115,6 +117,23 @@ export default class TripPresenter {
     this.#pointPresenterMap.clear();
   }
 
+
+  get points() {
+
+    const points = this.#pointsModel.points;
+    const sortType = this.#currentSortType;
+
+    switch (sortType) {
+      case SortType.DAY:
+        return [...points].sort(sortPointDate);
+      case SortType.TIME:
+        return [...points].sort(sortPointTime);
+      case SortType.PRICE:
+        return [...points].sort(sortPointPrice);
+      default:
+        throw new Error(`Unknown sort type: '${sortType}'`);
+    }
+  }
 
   init(container) {
     this.#pointsList = [...this.#pointsModel.points];
