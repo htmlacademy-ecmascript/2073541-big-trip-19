@@ -7,7 +7,7 @@ import { sortPointDate, sortPointTime, sortPointPrice } from '../utils/filters.j
 import { render } from '../framework/render.js';
 import { generateFilter } from '../mock/filter.js';
 import PointPresenter from './point-presenter.js';
-import {SortType} from '../const.js';
+import {SortType, UpdateType, UserAction } from '../const.js';
 
 
 export default class TripPresenter {
@@ -15,7 +15,6 @@ export default class TripPresenter {
   #pointsContainer = null;
   #pointsModel = null;
   #pointsList = null;
-  #sourcedPointsList = null;
   #destinations = null;
   #allOffers = null;
   #pointPresenterMap = new Map();
@@ -25,13 +24,14 @@ export default class TripPresenter {
   constructor({ pointsContainer, pointsModel }) {
     this.#pointsContainer = pointsContainer;
     this.#pointsModel = pointsModel;
+    this.#pointsModel.addObserver(this.#handleModelEvent);
   }
 
   #renderPoint = (point, offers, destination) => {
 
     const pointPresenter = new PointPresenter({
       pointListContainer: this.#pointListContainer.element,
-      onDataChange: this.#handlePointChange,
+      onDataChange: this.#handleViewAction,
       onModeChange: this.#handleModeChange
     });
 
@@ -64,39 +64,51 @@ export default class TripPresenter {
     this.#pointPresenterMap.forEach((presenter) => presenter.resetView());
   };
 
-  #handlePointChange = (updatedPoint) => {
-    this.#pointsList = updateItem(this.#pointsList, updatedPoint);
-    this.#sourcedPointsList = updateItem(this.#sourcedPointsList, updatedPoint);
-    this.#pointPresenterMap.get(updatedPoint.id).init(updatedPoint, this.#allOffers, this.#destinations );
-  };
 
   #handleSortTypeChange = (sortType) => {
     if (this.#currentSortType === sortType) {
       return;
     }
 
-    this.#sortPoints(sortType);
+    this.#currentSortType = sortType;
     this.#clearPointList();
     this.#renderPoints();
   };
 
-  #sortPoints(sortType) {
-    switch (sortType) {
-      case SortType.DAY:
-        this.#pointsList.sort(sortPointDate);
+  #handleViewAction = (actionType, updateType, update) => {
+    switch (actionType) {
+      case UserAction.UPDATE_POINT:
+        this.#pointsModel.updatePoint(updateType, update);
         break;
-      case SortType.TIME:
-        this.#pointsList.sort(sortPointTime);
+      case UserAction.ADD_POINT:
+        this.#pointsModel.addPoint(updateType, update);
         break;
-      case SortType.PRICE:
-        this.#pointsList.sort(sortPointPrice);
+      case UserAction.DELETE_POINT:
+        this.#pointsModel.deletePoint(updateType, update);
         break;
       default:
-        throw new Error(`Unknown sort type: '${sortType}'`);
+        throw new Error(`Unknown action type: '${actionType}'!`);
     }
+  };
 
-    this.#currentSortType = sortType;
-  }
+  #handleModelEvent = (updateType, data) => {
+    switch (updateType) {
+      case UpdateType.PATCH:
+        this.#pointPresenterMap.get(data.key).init(data, this.#allOffers, this.#destinations);
+        break;
+      case UpdateType.MINOR:
+        this.#clearPointList();
+        this.#renderPoints();
+        break;
+      case UpdateType.MAJOR:
+        this.#clearPointList({resetRenderedPointCount: true, resetSortType: true});
+        this.#renderPoints();
+        break;
+      default:
+        throw new Error(`Unknown update type: '${updateType}'!`);
+    }
+  };
+
 
   #clearPointList() {
     this.#pointPresenterMap.forEach((presenter) => presenter.destroy());
@@ -106,7 +118,6 @@ export default class TripPresenter {
 
   init(container) {
     this.#pointsList = [...this.#pointsModel.points];
-    this.#sourcedPointsList = this.#pointsList.sort(sortPointDate);
     this.#destinations = [...this.#pointsModel.destinations];
     this.#allOffers = [...this.#pointsModel.offersByType];
     const filters = generateFilter(this.#pointsList);
