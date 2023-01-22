@@ -4,10 +4,11 @@ import ListView from '../view/list-view.js';
 import EmptyListView from '../view/empty-list-view.js';
 import { updateItem } from '../utils/utils.js';
 import { sortPointDate, sortPointTime, sortPointPrice } from '../utils/filters.js';
-import { render } from '../framework/render.js';
+import { render, remove, RenderPosition } from '../framework/render.js';
 import { generateFilter } from '../mock/filter.js';
 import PointPresenter from './point-presenter.js';
-import {SortType, UpdateType, UserAction } from '../const.js';
+import {SortType, UpdateType, UserAction, FilterType } from '../const.js';
+import { filter } from '../utils/filters.js';
 
 
 export default class TripPresenter {
@@ -20,11 +21,17 @@ export default class TripPresenter {
   #pointPresenterMap = new Map();
   #currentSortType = SortType.DAY;
   #sortComponent = null;
+  #noPointComponent = null;
+  #filterModel = null;
+  #filterType = FilterType.EVERYTHING;
+  #filteredPoints = null;
 
-  constructor({ pointsContainer, pointsModel }) {
+  constructor({ pointsContainer, pointsModel, filterModel }) {
     this.#pointsContainer = pointsContainer;
     this.#pointsModel = pointsModel;
+    this.#filterModel = filterModel;
     this.#pointsModel.addObserver(this.#handleModelEvent);
+    this.#filterModel.addObserver(this.#handleModelEvent);
   }
 
   #renderPoint = (point, offers, destination) => {
@@ -41,10 +48,14 @@ export default class TripPresenter {
 
 
   #renderEmptyList() {
-    render(new EmptyListView(), this.#pointsContainer);
+    this.#noPointComponent = new EmptyListView({
+      filterType: this.#filterType
+    });
+    render(this.#noPointComponent, this.#pointsContainer);
   }
 
-  #renderPoints() {
+  #renderBoard() {
+    this.#renderSort();
     const points = this.points;
 
     if (!points.length) {
@@ -58,7 +69,7 @@ export default class TripPresenter {
 
   #renderSort() {
     this.#sortComponent = new SortView({ onSortTypeChange: this.#handleSortTypeChange, currentSortType: this.#currentSortType });
-    render(this.#sortComponent, this.#pointsContainer);
+    render(this.#sortComponent, this.#pointsContainer, RenderPosition.AFTERBEGIN);
   }
 
 
@@ -74,7 +85,7 @@ export default class TripPresenter {
 
     this.#currentSortType = sortType;
     this.#clearPointList();
-    this.#renderPoints();
+    this.#renderBoard();
   };
 
   #handleViewAction = (actionType, updateType, update) => {
@@ -96,15 +107,15 @@ export default class TripPresenter {
   #handleModelEvent = (updateType, data) => {
     switch (updateType) {
       case UpdateType.PATCH:
-        this.#pointPresenterMap.get(data.key).init(data, this.#allOffers, this.#destinations);
+        this.#pointPresenterMap.get(data.id).init(data, this.#allOffers, this.#destinations);
         break;
       case UpdateType.MINOR:
         this.#clearPointList();
-        this.#renderPoints();
+        this.#renderBoard();
         break;
       case UpdateType.MAJOR:
         this.#clearPointList({resetRenderedPointCount: true, resetSortType: true});
-        this.#renderPoints();
+        this.#renderBoard();
         break;
       default:
         throw new Error(`Unknown update type: '${updateType}'!`);
@@ -112,9 +123,18 @@ export default class TripPresenter {
   };
 
 
-  #clearPointList() {
+  #clearPointList({ resetSortType = false } = {}) {
+
     this.#pointPresenterMap.forEach((presenter) => presenter.destroy());
     this.#pointPresenterMap.clear();
+
+    remove(this.#sortComponent);
+    remove(this.#noPointComponent);
+
+    if (resetSortType) {
+      this.#currentSortType = SortType.DAY;
+    }
+
   }
 
 
@@ -122,14 +142,16 @@ export default class TripPresenter {
 
     const points = this.#pointsModel.points;
     const sortType = this.#currentSortType;
+    this.#filterType = this.#filterModel.filter;
+    const filteredPoints = filter[this.#filterType](points);
 
     switch (sortType) {
       case SortType.DAY:
-        return [...points].sort(sortPointDate);
+        return [...filteredPoints].sort(sortPointDate);
       case SortType.TIME:
-        return [...points].sort(sortPointTime);
+        return [...filteredPoints].sort(sortPointTime);
       case SortType.PRICE:
-        return [...points].sort(sortPointPrice);
+        return [...filteredPoints].sort(sortPointPrice);
       default:
         throw new Error(`Unknown sort type: '${sortType}'`);
     }
@@ -143,10 +165,9 @@ export default class TripPresenter {
 
 
     render(new FilterView({ filters }), container);
-    this.#renderSort();
     render(this.#pointListContainer, this.#pointsContainer);
 
-    this.#renderPoints();
+    this.#renderBoard();
   }
 }
 
