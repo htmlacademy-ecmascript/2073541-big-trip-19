@@ -1,15 +1,15 @@
 const EMPTY_LIST_MESSAGES = {
-  newEvent: 'Click New Event to create your first point',
-  noPastEvents: 'There are no past events now',
-  noPresentEvents: 'There are no present events now',
-  noFutureEvents: 'There are no future events now'
+  everything: 'Click New Event to create your first point',
+  past: 'There are no past events now',
+  present: 'There are no present events now',
+  future: 'There are no future events now'
 };
 
 const FilterType = {
-  EVERYTHING: 'everything',
-  FUTURE: 'future',
-  PRESENT: 'present',
-  PAST: 'past',
+  EVERYTHING: 'Everything',
+  FUTURE: 'Future',
+  PRESENT: 'Present',
+  PAST: 'Past',
 };
 
 const SortType = {

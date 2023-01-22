@@ -1,6 +1,6 @@
 import { render, replace, remove } from '../framework/render.js';
-import FilterView from '../view/trip-filter.js';
-import { filter } from '../utils/filter.js';
+import FilterView from '../view/filter-view.js';
+import { filter } from '../utils/filters.js';
 import { FilterType, UpdateType } from '../const.js';
 
 export default class FilterPresenter {
@@ -69,6 +69,7 @@ export default class FilterPresenter {
   };
 
   #handleFilterTypeChange = (filterType) => {
+    console.log(filterType)
     if (this.#filterModel.filter === filterType) {
       return;
     }

@@ -1,4 +1,3 @@
-import FilterView from '../view/filter-view.js';
 import SortView from '../view/sort-view.js';
 import ListView from '../view/list-view.js';
 import EmptyListView from '../view/empty-list-view.js';
@@ -157,14 +156,11 @@ export default class TripPresenter {
     }
   }
 
-  init(container) {
+  init() {
     this.#pointsList = [...this.#pointsModel.points];
     this.#destinations = [...this.#pointsModel.destinations];
     this.#allOffers = [...this.#pointsModel.offersByType];
-    const filters = generateFilter(this.#pointsList);
 
-
-    render(new FilterView({ filters }), container);
     render(this.#pointListContainer, this.#pointsContainer);
 
     this.#renderBoard();
