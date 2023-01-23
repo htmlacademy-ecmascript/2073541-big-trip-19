@@ -1,13 +1,22 @@
 import SortView from '../view/sort-view.js';
 import ListView from '../view/list-view.js';
 import EmptyListView from '../view/empty-list-view.js';
-import { updateItem } from '../utils/utils.js';
 import { sortPointDate, sortPointTime, sortPointPrice } from '../utils/filters.js';
 import { render, remove, RenderPosition } from '../framework/render.js';
-import { generateFilter } from '../mock/filter.js';
 import PointPresenter from './point-presenter.js';
+import NewPointPresenter from './new-point-presenter.js';
 import {SortType, UpdateType, UserAction, FilterType } from '../const.js';
 import { filter } from '../utils/filters.js';
+
+const DEFAULT_POINT = {
+  basePrice: 0,
+  dateFrom: '2019-07-10T22:55:56.845Z',
+  dateTo: '2019-07-11T22:55:56.845Z',
+  destination: [1],
+  isFavorite: false,
+  offers: [],
+  type: 'taxi'
+};
 
 
 export default class TripPresenter {
@@ -23,12 +32,19 @@ export default class TripPresenter {
   #noPointComponent = null;
   #filterModel = null;
   #filterType = FilterType.EVERYTHING;
-  #filteredPoints = null;
+  #newPointPresenter = null;
 
-  constructor({ pointsContainer, pointsModel, filterModel }) {
+
+  constructor({ pointsContainer, pointsModel, filterModel, onNewPointDestroy }) {
     this.#pointsContainer = pointsContainer;
     this.#pointsModel = pointsModel;
     this.#filterModel = filterModel;
+    this.#newPointPresenter = new NewPointPresenter({
+      pointListContainer: this.#pointListContainer.element,
+      onDataChange: this.#handleViewAction,
+      onDestroy: onNewPointDestroy
+    });
+
     this.#pointsModel.addObserver(this.#handleModelEvent);
     this.#filterModel.addObserver(this.#handleModelEvent);
   }
@@ -133,9 +149,7 @@ export default class TripPresenter {
     if (resetSortType) {
       this.#currentSortType = SortType.DAY;
     }
-
   }
-
 
   get points() {
 
@@ -154,6 +168,14 @@ export default class TripPresenter {
       default:
         throw new Error(`Unknown sort type: '${sortType}'`);
     }
+  }
+
+  createPoint() {
+    const point = DEFAULT_POINT;
+    this.#currentSortType = SortType.DAY;
+    this.#filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
+    this.#newPointPresenter
+      .init(point, this.#allOffers, this.#destinations);
   }
 
   init() {

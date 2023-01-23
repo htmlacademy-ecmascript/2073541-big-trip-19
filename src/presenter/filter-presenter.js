@@ -69,7 +69,7 @@ export default class FilterPresenter {
   };
 
   #handleFilterTypeChange = (filterType) => {
-    console.log(filterType)
+
     if (this.#filterModel.filter === filterType) {
       return;
     }
