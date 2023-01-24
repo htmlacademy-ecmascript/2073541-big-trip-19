@@ -28,13 +28,14 @@ export default class NewPointPresenter {
       return;
     }
 
+
     this.#pointEditComponent = new EditPointView({
       point: this.#point,
       allOffers: this.#offers,
       destinations: this.#destination,
       onFormSubmit: this.#handleFormSubmit,
-      onFormClick: this.#handleRollupClick,
-      onDeleteClick: this.#handleDeleteClick
+      onDeleteClick: this.#handleDeleteClick,
+      isEditMode: false
     });
 
     render(this.#pointEditComponent, this.#pointListContainer, RenderPosition.AFTERBEGIN);
@@ -68,9 +69,6 @@ export default class NewPointPresenter {
     this.destroy();
   };
 
-  #handleRollupClick = () => {
-    this.#pointEditComponent.reset(this.#point);
-  };
 
   #escKeyDownHandler = (evt) => {
     if (isEscKey(evt)) {

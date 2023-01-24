@@ -9,13 +9,13 @@ import {SortType, UpdateType, UserAction, FilterType } from '../const.js';
 import { filter } from '../utils/filters.js';
 
 const DEFAULT_POINT = {
-  basePrice: 0,
+  basePrice: '',
   dateFrom: '2019-07-10T22:55:56.845Z',
   dateTo: '2019-07-11T22:55:56.845Z',
   destination: [1],
   isFavorite: false,
   offers: [],
-  type: 'taxi'
+  type: 'flight'
 };
 
 
