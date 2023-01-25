@@ -12,7 +12,7 @@ const DEFAULT_POINT = {
   basePrice: '',
   dateFrom: '2019-07-10T22:55:56.845Z',
   dateTo: '2019-07-11T22:55:56.845Z',
-  destination: [1],
+  destination: '',
   isFavorite: false,
   offers: [],
   type: 'flight'

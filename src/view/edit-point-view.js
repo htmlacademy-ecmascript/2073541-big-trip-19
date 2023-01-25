@@ -2,6 +2,7 @@ import dayjs from 'dayjs';
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import { capitalizeFirstLetter, isPositiveInteger } from '../utils/utils.js';
 import flatpickr from 'flatpickr';
+import he from 'he';
 
 import 'flatpickr/dist/flatpickr.min.css';
 
@@ -27,25 +28,49 @@ const getTypeTemplate = (type, allOffers) => allOffers.map((offer) =>
       for="event-type-${offer.type}-${offer.id}">${capitalizeFirstLetter(offer.type)}</label>
   </div>`).join('');
 
+const getPointOffers = (offersTemplate) => (
+  `<section class="event__details">
+          <section class="event__section  event__section--offers">
+            <h3 class="event__section-title  event__section-title--offers">Offers</h3>
+            ${offersTemplate}
+          </section>`
+);
+
+const getPointDescription = (destination) => {
+
+  if(destination && destination.description) {
+    return(
+      `<section class="event__section  event__section--destination">
+    <h3 class="event__section-title  event__section-title--destination">Destination</h3>
+     <p class="event__destination-description">${destination.description}</p>
+     <div class="event__photos-container">
+        <div class="event__photos-tape">
+          ${destination.pictures.map(({ src, description: pictureDescription }) =>
+        `<img class="event__photo" src="${src}.jpg" alt="${pictureDescription}">`).join('')}
+        </div>
+      </div>
+   </section>`);
+  }
+  return '';
+};
+const getDestinationInput = (destination, id) => {
+  if(destination) {
+    return `<input class="event__input  event__input--destination" id="event-destination-${id}" type="text" name="event-destination"
+  value=${destination.name} list="destination-list-${id}">`;
+  }
+  return `<input class="event__input  event__input--destination" id="event-destination-${id}" type="text" name="event-destination"
+ value list="destination-list-${id}">`;
+};
 
 function createEditPointTemplate (point, allOffers, destinations, isEditMode ) {
 
-  const { type, dateFrom, dateTo, basePrice, destination, offers} = point;
-
+  const { type, dateFrom, dateTo, basePrice, destination, offers, id} = point;
   const pointDestination = destinations.find((item) => destination.includes(item.id));
-
-  const { pictures, name, description } = pointDestination;
-
   const pointOfferByType = allOffers.find((offer) => offer.type === type);
-
   const pointOffers = pointOfferByType.offers;
-
   const offersTemplate = getOffersTemplate(offers, pointOffers);
-
   const typesList = getTypeTemplate(type, allOffers);
-
   const destinationsList = destinations.map((item) => `<option value="${item.name}"></option>`).join('');
-
   const getRollupBtn = () => isEditMode ? '<button class="event__rollup-btn" type="button"></button>' : '';
 
   return (
@@ -71,9 +96,8 @@ function createEditPointTemplate (point, allOffers, destinations, isEditMode ) {
             <label class="event__label  event__type-output" for="event-destination-1">
               ${type}
             </label>
-            <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination"
-            value=${name} list="destination-list-1">
-            <datalist id="destination-list-1">
+            ${getDestinationInput(pointDestination, id)}
+            <datalist id="destination-list-${id}">
               ${destinationsList}
             </datalist>
           </div>
@@ -100,25 +124,8 @@ function createEditPointTemplate (point, allOffers, destinations, isEditMode ) {
           <button class="event__reset-btn" type="reset">${isEditMode ? 'Delete' : 'Cancel'}</button>
           ${getRollupBtn()}
         </header>
-        <section class="event__details">
-          <section class="event__section  event__section--offers">
-            ${pointOffers.length ?
-      `<h3 class="event__section-title  event__section-title--offers">Offers</h3>
-            ${offersTemplate}</section>`
-      : ''}
-          <section class="event__section  event__section--destination">
-          ${description ?
-      `<h3 class="event__section-title  event__section-title--destination">Destination</h3>
-           <p class="event__destination-description">${description}</p>
-           <div class="event__photos-container">
-            <div class="event__photos-tape">
-              ${pictures.map(({ src, description: pictureDescription }) => `<img class="event__photo" src="${src}.jpg" alt="${pictureDescription}">`).join('')}
-            </div>
-          </div>
-         </section>`
-      : ''}
-
-
+          ${getPointOffers(offersTemplate)}
+          ${getPointDescription(pointDestination)}
         </section>
       </form>
     </li>`
@@ -157,7 +164,11 @@ export default class EditPointView extends AbstractStatefulView {
 
   #formSubmitHandler = (evt) => {
     evt.preventDefault();
-    this.#handleFormSubmit(EditPointView.parseStateToPoint(this._state));
+    if(this._state.destination){
+      this.#handleFormSubmit(EditPointView.parseStateToPoint(this._state));
+      return;
+    }
+    console.log('Пункт назначения отсутствует в списке');
   };
 
   #editBtnHandler = (evt) => {
@@ -180,17 +191,17 @@ export default class EditPointView extends AbstractStatefulView {
   #destinationChangeHandler = (evt) => {
     evt.preventDefault();
 
-    if (this.#destinations.some((destination) => destination.name === evt.target.value)) {
-      const selectedDestination = this.#destinations
-        .find((destination) => evt.target.value === destination.name);
+    const selectedDestination = this.#destinations.find((destination) => evt.target.value === destination.name);
 
+    if (selectedDestination) {
       this.updateElement({
         destination: [selectedDestination.id]
       });
-    } else {
-      console.log('Пункт назначения отсутствует в списке');
+      return;
     }
-
+    this.updateElement({
+      destination: ''
+    });
   };
 
   #offerChangeHandler = (evt) => {
@@ -201,12 +212,9 @@ export default class EditPointView extends AbstractStatefulView {
 
     if (currentOfferIndex === -1) {
       this._setState(this._state.offers.push(currentOfferId));
-
       return;
     }
-
     this._setState(this._state.offers.splice(currentOfferIndex, 1));
-
   };
 
   #priceChangeHandler = (evt) => {
@@ -216,13 +224,12 @@ export default class EditPointView extends AbstractStatefulView {
       this.updateElement({
         basePrice: evt.target.value
       });
-    } else {
-      this.updateElement({
-        basePrice: ''
-      });
-      console.log('Необходимо ввести целое положительное число');
+      return;
     }
-
+    this.updateElement({
+      basePrice: ''
+    });
+    console.log('Необходимо ввести целое положительное число');
   };
 
   #setInnerHandlers = () => {
