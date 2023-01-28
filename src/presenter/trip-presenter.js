@@ -93,7 +93,6 @@ export default class TripPresenter {
     this.#currentSortType = sortType;
     this.#clearPointList();
     this.#renderBoard();
-    this.#renderSort();
   };
 
   #handleViewAction = (actionType, updateType, update) => {
@@ -199,7 +198,7 @@ export default class TripPresenter {
       this.#renderEmptyList();
       return;
     }
-
+    this.#renderSort();
     points.forEach((listPoint) =>
       this.#renderPoint(listPoint, this.offers, this.destinations));
   }
@@ -207,7 +206,7 @@ export default class TripPresenter {
   init() {
     render(this.#pointListContainer, this.#pointsContainer);
     this.#renderBoard();
-    this.#renderSort();
+
   }
 }
 
