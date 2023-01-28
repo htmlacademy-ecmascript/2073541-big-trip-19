@@ -46,7 +46,7 @@ const getPointDescription = (destination) => {
      <div class="event__photos-container">
         <div class="event__photos-tape">
           ${destination.pictures.map(({ src, description: pictureDescription }) =>
-        `<img class="event__photo" src="${src}.jpg" alt="${pictureDescription}">`).join('')}
+        `<img class="event__photo" src="${src}" alt="${pictureDescription}">`).join('')}
         </div>
       </div>
    </section>`);
@@ -65,7 +65,7 @@ const getDestinationInput = (destination, id) => {
 function createEditPointTemplate (point, allOffers, destinations, isEditMode ) {
 
   const { type, dateFrom, dateTo, basePrice, destination, offers, id} = point;
-  const pointDestination = destinations.find((item) => destination.includes(item.id));
+  const pointDestination = destinations.find((item) => destination === item.id);
   const pointOfferByType = allOffers.find((offer) => offer.type === type);
   const pointOffers = pointOfferByType.offers;
   const offersTemplate = getOffersTemplate(offers, pointOffers);
@@ -195,7 +195,7 @@ export default class EditPointView extends AbstractStatefulView {
 
     if (selectedDestination) {
       this.updateElement({
-        destination: [selectedDestination.id]
+        destination: selectedDestination.id
       });
       return;
     }
@@ -207,14 +207,15 @@ export default class EditPointView extends AbstractStatefulView {
   #offerChangeHandler = (evt) => {
     evt.preventDefault();
 
+    const selectedOffers = this._state.offers;
     const currentOfferId = +evt.target.value;
-    const currentOfferIndex = this._state.offers.indexOf(currentOfferId);
+    const currentOfferIndex = selectedOffers.indexOf(currentOfferId);
 
     if (currentOfferIndex === -1) {
-      this._setState(this._state.offers.push(currentOfferId));
+      selectedOffers.push(currentOfferId);
       return;
     }
-    this._setState(this._state.offers.splice(currentOfferIndex, 1));
+    selectedOffers.splice(currentOfferIndex, 1);
   };
 
   #priceChangeHandler = (evt) => {
