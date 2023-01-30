@@ -183,7 +183,7 @@ export default class TripPresenter {
     this.#currentSortType = SortType.DAY;
     this.#filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
     this.#newPointPresenter
-      .init(point, this.#allOffers, this.#destinations);
+      .init(point, this.offers, this.destinations);
   }
 
   #renderBoard() {
