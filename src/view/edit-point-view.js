@@ -7,8 +7,7 @@ import he from 'he';
 import 'flatpickr/dist/flatpickr.min.css';
 
 const getOffersTemplate = (offers, pointOffers) => pointOffers.map((offer) =>
-  `<div class="event__available-offers">
-      <div class="event__offer-selector">
+  `<div class="event__offer-selector">
         <input class="event__offer-checkbox  visually-hidden"
           id="event-offer-${offer.id}" type="checkbox"
           name=${offer.title} ${offers.includes(offer.id) ? 'checked' : ''} value="${offer.id}">
@@ -28,13 +27,6 @@ const getTypeTemplate = (type, allOffers) => allOffers.map((offer) =>
       for="event-type-${offer.type}-${offer.id}">${capitalizeFirstLetter(offer.type)}</label>
   </div>`).join('');
 
-const getPointOffers = (offersTemplate) => (
-  `<section class="event__details">
-          <section class="event__section  event__section--offers">
-            <h3 class="event__section-title  event__section-title--offers">Offers</h3>
-            ${offersTemplate}
-          </section>`
-);
 
 const getPointDescription = (destination) => {
 
@@ -124,7 +116,13 @@ function createEditPointTemplate (point, allOffers, destinations, isEditMode ) {
           <button class="event__reset-btn" type="reset">${isEditMode ? 'Delete' : 'Cancel'}</button>
           ${getRollupBtn()}
         </header>
-          ${getPointOffers(offersTemplate)}
+        <section class="event__details">
+        <section class="event__section  event__section--offers">
+          <h3 class="event__section-title  event__section-title--offers">Offers</h3>
+          <div class="event__available-offers">
+          ${offersTemplate}
+          </div>
+        </section>
           ${getPointDescription(pointDestination)}
         </section>
       </form>

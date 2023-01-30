@@ -2,6 +2,7 @@ import SortView from '../view/sort-view.js';
 import ListView from '../view/list-view.js';
 import EmptyListView from '../view/empty-list-view.js';
 import LoadingView from '../view/loading-view.js';
+import ErrorView from '../view/error-view.js';
 import { sortPointDate, sortPointTime, sortPointPrice } from '../utils/filters.js';
 import { render, remove, RenderPosition } from '../framework/render.js';
 import PointPresenter from './point-presenter.js';
@@ -35,6 +36,7 @@ export default class TripPresenter {
   #filterType = FilterType.EVERYTHING;
   #newPointPresenter = null;
   #loadingComponent = new LoadingView();
+  #loadingErrorComponent = new ErrorView();
   #isLoading = true;
 
 
@@ -128,6 +130,11 @@ export default class TripPresenter {
         this.#isLoading = false;
         remove(this.#loadingComponent);
         this.#renderBoard();
+        break;
+      case UpdateType.INIT_ERROR:
+        this.#isLoading = false;
+        render(this.#loadingErrorComponent, this.#pointsContainer);
+        remove(this.#loadingComponent);
         break;
       default:
         throw new Error(`Unknown update type: '${updateType}'!`);

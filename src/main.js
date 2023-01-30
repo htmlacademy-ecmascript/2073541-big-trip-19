@@ -38,6 +38,9 @@ const newPointButtonComponent = new NewPointBtnView({
 });
 
 function handleNewPointButtonClick() {
+  if(!pointsModel.destinations.length) {
+    return;
+  }
   tripPresenter.createPoint();
   newPointButtonComponent.element.disabled = true;
 }
