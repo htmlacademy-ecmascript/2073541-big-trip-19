@@ -20,20 +20,6 @@ const filter = {
   [FilterType.PAST]: (points) => points.filter((point) => isPastEvent(point.dateFrom, point.dateTo)),
 };
 
-/* const getFilteredEvents = (points) => points.reduce((acc, point) => {
-  const filterType = (() => {
-    if (isFutureEvent(point.dateFrom, point.dateTo)) {
-      return FilterType.FUTURE;
-    } else if (isPresentEvent(point.dateFrom, point.dateTo)) {
-      return FilterType.PRESENT;
-    } else if (isPastEvent(point.dateFrom, point.dateTo)) {
-      return FilterType.PAST;
-    }
-  })();
-  acc[filterType].push(point);
-  return acc;
-}, { [FilterType.FUTURE]: [], [FilterType.PRESENT]: [], [FilterType.PAST]: [] }); */
-
 const sortPointDate = (pointA, pointB) => dayjs(pointA.dateFrom).diff(dayjs(pointB.dateFrom));
 const sortPointTime = (pointA, pointB) => dayjs(pointA.dateTo).diff(pointA.dateFrom) - dayjs(pointB.dateTo).diff(pointB.dateFrom);
 const sortPointPrice = (pointA, pointB) => pointA.basePrice - pointB.basePrice;

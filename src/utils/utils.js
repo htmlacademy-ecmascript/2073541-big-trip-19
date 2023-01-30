@@ -32,11 +32,9 @@ const getEventDuration = (start, finish) => {
 
 const isEscKey = (evt) => evt.key === 'Escape' || evt.key === 'Esc';
 
-//const updateItem = (items, update) => items.map((item) => item.id === update.id ? update : item);
-
 const capitalizeFirstLetter = (string) => string.charAt(0).toUpperCase() + string.slice(1);
 
-const isPositiveInteger = (str) => typeof str === 'string' && Number.isInteger(Number(str)) && Number(str) > 0;
+const isPositiveInteger = (str) => typeof str === 'string' && Number.isInteger(Number(str)) && Number(str) >= 1;
 
 export { getRandomArrayElement, getRandomInt, getEventDuration, isEscKey, capitalizeFirstLetter, isPositiveInteger };
 

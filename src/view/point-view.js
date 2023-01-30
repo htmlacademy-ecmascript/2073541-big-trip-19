@@ -4,9 +4,10 @@ import {getEventDuration} from '../utils/utils.js';
 
 
 function createListItemTemplate(point, allOffers, destinations) {
+
   const { type, dateFrom, dateTo, basePrice, destination, offers, isFavorite} = point;
 
-  const pointDestination = destinations.find((item) => destination.includes(item.id));
+  const pointDestination = destinations.find((item) => destination === item.id);
 
   const pointOfferByType = allOffers.find((offer) => offer.type === type);
 

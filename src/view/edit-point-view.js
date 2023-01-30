@@ -7,8 +7,7 @@ import he from 'he';
 import 'flatpickr/dist/flatpickr.min.css';
 
 const getOffersTemplate = (offers, pointOffers) => pointOffers.map((offer) =>
-  `<div class="event__available-offers">
-      <div class="event__offer-selector">
+  `<div class="event__offer-selector">
         <input class="event__offer-checkbox  visually-hidden"
           id="event-offer-${offer.id}" type="checkbox"
           name=${offer.title} ${offers.includes(offer.id) ? 'checked' : ''} value="${offer.id}">
@@ -28,13 +27,6 @@ const getTypeTemplate = (type, allOffers) => allOffers.map((offer) =>
       for="event-type-${offer.type}-${offer.id}">${capitalizeFirstLetter(offer.type)}</label>
   </div>`).join('');
 
-const getPointOffers = (offersTemplate) => (
-  `<section class="event__details">
-          <section class="event__section  event__section--offers">
-            <h3 class="event__section-title  event__section-title--offers">Offers</h3>
-            ${offersTemplate}
-          </section>`
-);
 
 const getPointDescription = (destination) => {
 
@@ -46,7 +38,7 @@ const getPointDescription = (destination) => {
      <div class="event__photos-container">
         <div class="event__photos-tape">
           ${destination.pictures.map(({ src, description: pictureDescription }) =>
-        `<img class="event__photo" src="${src}.jpg" alt="${pictureDescription}">`).join('')}
+        `<img class="event__photo" src="${src}" alt="${pictureDescription}">`).join('')}
         </div>
       </div>
    </section>`);
@@ -65,7 +57,7 @@ const getDestinationInput = (destination, id) => {
 function createEditPointTemplate (point, allOffers, destinations, isEditMode ) {
 
   const { type, dateFrom, dateTo, basePrice, destination, offers, id} = point;
-  const pointDestination = destinations.find((item) => destination.includes(item.id));
+  const pointDestination = destinations.find((item) => destination === item.id);
   const pointOfferByType = allOffers.find((offer) => offer.type === type);
   const pointOffers = pointOfferByType.offers;
   const offersTemplate = getOffersTemplate(offers, pointOffers);
@@ -124,7 +116,13 @@ function createEditPointTemplate (point, allOffers, destinations, isEditMode ) {
           <button class="event__reset-btn" type="reset">${isEditMode ? 'Delete' : 'Cancel'}</button>
           ${getRollupBtn()}
         </header>
-          ${getPointOffers(offersTemplate)}
+        <section class="event__details">
+        <section class="event__section  event__section--offers">
+          <h3 class="event__section-title  event__section-title--offers">Offers</h3>
+          <div class="event__available-offers">
+          ${offersTemplate}
+          </div>
+        </section>
           ${getPointDescription(pointDestination)}
         </section>
       </form>
@@ -195,7 +193,7 @@ export default class EditPointView extends AbstractStatefulView {
 
     if (selectedDestination) {
       this.updateElement({
-        destination: [selectedDestination.id]
+        destination: selectedDestination.id
       });
       return;
     }
@@ -207,14 +205,15 @@ export default class EditPointView extends AbstractStatefulView {
   #offerChangeHandler = (evt) => {
     evt.preventDefault();
 
+    const selectedOffers = this._state.offers;
     const currentOfferId = +evt.target.value;
-    const currentOfferIndex = this._state.offers.indexOf(currentOfferId);
+    const currentOfferIndex = selectedOffers.indexOf(currentOfferId);
 
     if (currentOfferIndex === -1) {
-      this._setState(this._state.offers.push(currentOfferId));
+      selectedOffers.push(currentOfferId);
       return;
     }
-    this._setState(this._state.offers.splice(currentOfferIndex, 1));
+    selectedOffers.splice(currentOfferIndex, 1);
   };
 
   #priceChangeHandler = (evt) => {
