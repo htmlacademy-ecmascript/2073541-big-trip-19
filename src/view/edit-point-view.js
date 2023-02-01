@@ -56,6 +56,7 @@ const getDestinationInput = (destination, id) => {
 
 function createEditPointTemplate (point, allOffers, destinations, isEditMode ) {
 
+
   const { type, dateFrom, dateTo, basePrice, destination, offers, id} = point;
   const pointDestination = destinations.find((item) => destination === item.id);
   const pointOfferByType = allOffers.find((offer) => offer.type === type);
@@ -64,6 +65,13 @@ function createEditPointTemplate (point, allOffers, destinations, isEditMode ) {
   const typesList = getTypeTemplate(type, allOffers);
   const destinationsList = destinations.map((item) => `<option value="${item.name}"></option>`).join('');
   const getRollupBtn = () => isEditMode ? '<button class="event__rollup-btn" type="button"></button>' : '';
+  const getOffersSection = (template) => pointOffers.length ?
+    ` <section class="event__section  event__section--offers">
+          <h3 class="event__section-title  event__section-title--offers">Offers</h3>
+          <div class="event__available-offers">
+          ${template}
+          </div>
+    </section>` : '';
 
   return (
     `<li class="trip-events__item">
@@ -117,12 +125,7 @@ function createEditPointTemplate (point, allOffers, destinations, isEditMode ) {
           ${getRollupBtn()}
         </header>
         <section class="event__details">
-        <section class="event__section  event__section--offers">
-          <h3 class="event__section-title  event__section-title--offers">Offers</h3>
-          <div class="event__available-offers">
-          ${offersTemplate}
-          </div>
-        </section>
+          ${getOffersSection(offersTemplate)}
           ${getPointDescription(pointDestination)}
         </section>
       </form>
