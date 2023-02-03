@@ -48,16 +48,15 @@ const getPointDescription = (destination) => {
 const getDestinationInput = (destination, id) => {
   if(destination) {
     return `<input class="event__input  event__input--destination" id="event-destination-${id}" type="text" name="event-destination"
-  value=${destination.name} list="destination-list-${id}">`;
+  value=${destination.name} list="destination-list-${id}" required>`;
   }
   return `<input class="event__input  event__input--destination" id="event-destination-${id}" type="text" name="event-destination"
- value list="destination-list-${id}">`;
+ value list="destination-list-${id}" required>`;
 };
 
 function createEditPointTemplate (point, allOffers, destinations, isEditMode ) {
 
-
-  const { type, dateFrom, dateTo, basePrice, destination, offers, id} = point;
+  const { type, dateFrom, dateTo, basePrice, destination, offers, id, isDisabled, isSaving, isDeleting} = point;
   const pointDestination = destinations.find((item) => destination === item.id);
   const pointOfferByType = allOffers.find((offer) => offer.type === type);
   const pointOffers = pointOfferByType.offers;
@@ -72,6 +71,15 @@ function createEditPointTemplate (point, allOffers, destinations, isEditMode ) {
           ${template}
           </div>
     </section>` : '';
+  const getResetBtn = () => {
+    if (isEditMode) {
+      if (isDeleting) {
+        return 'Deleting...';
+      }
+      return 'Delete';
+    }
+    return 'Cancel';
+  };
 
   return (
     `<li class="trip-events__item">
@@ -117,11 +125,11 @@ function createEditPointTemplate (point, allOffers, destinations, isEditMode ) {
               <span class="visually-hidden">Price</span>
               &euro;
             </label>
-            <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value=${basePrice}>
+            <input required class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value=${basePrice}>
           </div>
 
-          <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-          <button class="event__reset-btn" type="reset">${isEditMode ? 'Delete' : 'Cancel'}</button>
+          <button class="event__save-btn  btn  btn--blue" type="submit" ${isDisabled ? 'disabled' : ''}>${isSaving ? 'Saving...' : 'Save'}</button>
+          <button class="event__reset-btn" type="reset" ${isDisabled ? 'disabled' : ''}>${getResetBtn()}</button>
           ${getRollupBtn()}
         </header>
         <section class="event__details">
@@ -165,11 +173,7 @@ export default class EditPointView extends AbstractStatefulView {
 
   #formSubmitHandler = (evt) => {
     evt.preventDefault();
-    if(this._state.destination){
-      this.#handleFormSubmit(EditPointView.parseStateToPoint(this._state));
-      return;
-    }
-    console.log('Пункт назначения отсутствует в списке');
+    this.#handleFormSubmit(EditPointView.parseStateToPoint(this._state));
   };
 
   #editBtnHandler = (evt) => {
@@ -200,9 +204,7 @@ export default class EditPointView extends AbstractStatefulView {
       });
       return;
     }
-    this.updateElement({
-      destination: ''
-    });
+    evt.target.value = '';
   };
 
   #offerChangeHandler = (evt) => {
@@ -229,9 +231,8 @@ export default class EditPointView extends AbstractStatefulView {
       return;
     }
     this.updateElement({
-      basePrice: ''
+      basePrice: 0
     });
-    console.log('Необходимо ввести целое положительное число');
   };
 
   #setInnerHandlers = () => {
@@ -298,8 +299,19 @@ export default class EditPointView extends AbstractStatefulView {
     this.#handleDeleteClick(EditPointView.parseStateToPoint(this._state));
   };
 
-  static parsePointToState = (point) => ({ ...point });
+  static parsePointToState = (point) => ({ ...point,
+    isDisabled: false,
+    isSaving: false,
+    isDeleting: false,
+  });
 
-  static parseStateToPoint = (state) => ({ ...state });
+  static parseStateToPoint = (state) =>{
+    const point = { ...state };
+    delete point.isDisabled;
+    delete point.isDeleting;
+    delete point.isSaving;
+
+    return point;
+  };
 
 }

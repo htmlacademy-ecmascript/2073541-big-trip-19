@@ -34,5 +34,10 @@ const UpdateType = {
   INIT_ERROR: 'INIT_ERROR',
 };
 
+const TimeLimit = {
+  LOWER_LIMIT: 350,
+  UPPER_LIMIT: 1000,
+};
 
-export { EMPTY_LIST_MESSAGES, FilterType, SortType, UserAction, UpdateType };
+
+export { EMPTY_LIST_MESSAGES, FilterType, SortType, UserAction, UpdateType, TimeLimit };
