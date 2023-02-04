@@ -123,7 +123,6 @@ export default class TripPresenter {
           await this.#pointsModel.addPoint(updateType, update);
         } catch (err) {
           this.#newPointPresenter.setAborting();
-
         }
 
         break;
@@ -150,7 +149,7 @@ export default class TripPresenter {
         this.#renderBoard();
         break;
       case UpdateType.MAJOR:
-        this.#clearPointList({resetRenderedPointCount: true, resetSortType: true});
+        this.#clearPointList({resetSortType: true});
         this.#renderBoard();
         break;
       case UpdateType.INIT:
@@ -176,6 +175,7 @@ export default class TripPresenter {
 
     this.#pointPresenterMap.forEach((presenter) => presenter.destroy());
     this.#pointPresenterMap.clear();
+    this.#newPointPresenter.destroy();
 
     remove(this.#sortComponent);
     remove(this.#noPointComponent);

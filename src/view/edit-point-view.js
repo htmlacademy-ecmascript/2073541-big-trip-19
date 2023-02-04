@@ -2,7 +2,7 @@ import dayjs from 'dayjs';
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import { capitalizeFirstLetter, isPositiveInteger } from '../utils/utils.js';
 import flatpickr from 'flatpickr';
-import he from 'he';
+//import he from 'he';
 
 import 'flatpickr/dist/flatpickr.min.css';
 
@@ -48,10 +48,10 @@ const getPointDescription = (destination) => {
 const getDestinationInput = (destination, id) => {
   if(destination) {
     return `<input class="event__input  event__input--destination" id="event-destination-${id}" type="text" name="event-destination"
-  value=${destination.name} list="destination-list-${id}" required>`;
+  value=${destination.name} list="destination-list-${id}" >`;
   }
   return `<input class="event__input  event__input--destination" id="event-destination-${id}" type="text" name="event-destination"
- value list="destination-list-${id}" required>`;
+ value list="destination-list-${id}" >`;
 };
 
 function createEditPointTemplate (point, allOffers, destinations, isEditMode ) {
@@ -125,7 +125,7 @@ function createEditPointTemplate (point, allOffers, destinations, isEditMode ) {
               <span class="visually-hidden">Price</span>
               &euro;
             </label>
-            <input required class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value=${basePrice}>
+            <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value=${basePrice}>
           </div>
 
           <button class="event__save-btn  btn  btn--blue" type="submit" ${isDisabled ? 'disabled' : ''}>${isSaving ? 'Saving...' : 'Save'}</button>
@@ -275,7 +275,7 @@ export default class EditPointView extends AbstractStatefulView {
         dateFormat: 'd/m/y H:i',
         defaultDate: this._state.dateFrom,
         onChange: this.#dateFromChangeHandler,
-        time24hr: true
+        'time_24hr': true
       }
     );
   };
@@ -289,7 +289,7 @@ export default class EditPointView extends AbstractStatefulView {
         minDate: this._state.dateFrom,
         defaultDate: this._state.dateTo,
         onChange: this.#dateToChangeHandler,
-        time24hr: true
+        'time_24hr': true
       }
     );
   };
