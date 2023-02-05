@@ -7,7 +7,7 @@ import NewPointBtnView from './view/new-point-button-view';
 import { render } from './framework/render.js';
 import PointsApiService from './points-api-service.js';
 
-const AUTHORIZATION = 'Basic abcd1517';
+const AUTHORIZATION = 'Basic bbbcd1517';
 const END_POINT = 'https://19.ecmascript.pages.academy/big-trip';
 const headerElement = document.querySelector('.trip-controls');
 const tripEventsElement = document.querySelector('.trip-events');
@@ -38,7 +38,7 @@ const newPointButtonComponent = new NewPointBtnView({
 });
 
 function handleNewPointButtonClick() {
-  if(!pointsModel.destinations.length) {
+  if(!pointsModel.points.length) {
     return;
   }
   tripPresenter.createPoint();
