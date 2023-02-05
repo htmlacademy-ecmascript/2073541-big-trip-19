@@ -3,6 +3,7 @@ import ListView from '../view/list-view.js';
 import EmptyListView from '../view/empty-list-view.js';
 import LoadingView from '../view/loading-view.js';
 import ErrorView from '../view/error-view.js';
+import TripInfoView from '../view/trip-info-view.js';
 import { sortPointDate, sortPointTime, sortPointPrice } from '../utils/filters.js';
 import { render, remove, RenderPosition } from '../framework/render.js';
 import PointPresenter from './point-presenter.js';
@@ -27,6 +28,7 @@ const DEFAULT_POINT = {
 export default class TripPresenter {
   #pointListContainer = new ListView();
   #pointsContainer = null;
+  #tripInfoContainer = null;
   #pointsModel = null;
   #pointsList = null;
   #destinations = null;
@@ -34,6 +36,7 @@ export default class TripPresenter {
   #pointPresenterMap = new Map();
   #currentSortType = SortType.DAY;
   #sortComponent = null;
+  #tripInfoComponent = null;
   #noPointComponent = null;
   #filterModel = null;
   #filterType = FilterType.EVERYTHING;
@@ -47,7 +50,8 @@ export default class TripPresenter {
   });
 
 
-  constructor({ pointsContainer, pointsModel, filterModel, onNewPointDestroy }) {
+  constructor({ pointsContainer, tripInfoContainer, pointsModel, filterModel, onNewPointDestroy }) {
+    this.#tripInfoContainer = tripInfoContainer;
     this.#pointsContainer = pointsContainer;
     this.#pointsModel = pointsModel;
     this.#filterModel = filterModel;
@@ -85,6 +89,13 @@ export default class TripPresenter {
   #renderSort() {
     this.#sortComponent = new SortView({ onSortTypeChange: this.#handleSortTypeChange, currentSortType: this.#currentSortType });
     render(this.#sortComponent, this.#pointsContainer, RenderPosition.AFTERBEGIN);
+  }
+
+  #renderTripInfo() {
+    remove(this.#tripInfoComponent);
+    const points = this.#pointsModel.points.sort(sortPointDate);
+    this.#tripInfoComponent = new TripInfoView(points, this.offers, this.destinations);
+    render(this.#tripInfoComponent, this.#tripInfoContainer, RenderPosition.BEFOREBEGIN);
   }
 
 
@@ -229,9 +240,11 @@ export default class TripPresenter {
     const points = this.points;
 
     if (!points.length) {
+      this.#renderTripInfo();
       this.#renderEmptyList();
       return;
     }
+    this.#renderTripInfo();
     this.#renderSort();
     points.forEach((listPoint) =>
       this.#renderPoint(listPoint, this.offers, this.destinations));
