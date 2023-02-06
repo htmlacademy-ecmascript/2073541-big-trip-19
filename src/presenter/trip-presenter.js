@@ -8,22 +8,9 @@ import { sortPointDate, sortPointTime, sortPointPrice } from '../utils/filters.j
 import { render, remove, RenderPosition } from '../framework/render.js';
 import PointPresenter from './point-presenter.js';
 import NewPointPresenter from './new-point-presenter.js';
-import {SortType, UpdateType, UserAction, FilterType, TimeLimit } from '../const.js';
+import {SortType, UpdateType, UserAction, FilterType, TimeLimit, DEFAULT_POINT } from '../const.js';
 import { filter } from '../utils/filters.js';
-import dayjs from 'dayjs';
 import UiBlocker from '../framework/ui-blocker/ui-blocker.js';
-
-
-const DEFAULT_POINT = {
-  basePrice: '',
-  dateFrom: dayjs().toISOString(),
-  dateTo: dayjs().toISOString(),
-  destination: '',
-  isFavorite: false,
-  offers: [],
-  type: 'flight'
-};
-
 
 export default class TripPresenter {
   #pointListContainer = new ListView();

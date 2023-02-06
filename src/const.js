@@ -1,9 +1,23 @@
+import dayjs from 'dayjs';
+
 const EMPTY_LIST_MESSAGES = {
   Everything: 'Click New Event to create your first point',
   Past: 'There are no past events now',
   Present: 'There are no present events now',
   Future: 'There are no future events now'
 };
+
+const DEFAULT_POINT = {
+  basePrice: '',
+  dateFrom: dayjs().toISOString(),
+  dateTo: dayjs().toISOString(),
+  destination: '',
+  isFavorite: false,
+  offers: [],
+  type: 'flight'
+};
+
+const MAX_VISIBLE_CITIES = 3;
 
 const FilterType = {
   EVERYTHING: 'Everything',
@@ -40,4 +54,4 @@ const TimeLimit = {
 };
 
 
-export { EMPTY_LIST_MESSAGES, FilterType, SortType, UserAction, UpdateType, TimeLimit };
+export { EMPTY_LIST_MESSAGES, FilterType, SortType, UserAction, UpdateType, TimeLimit, MAX_VISIBLE_CITIES, DEFAULT_POINT };
