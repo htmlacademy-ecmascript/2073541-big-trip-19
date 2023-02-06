@@ -1,7 +1,7 @@
 
 import AbstractView from '../framework/view/abstract-view.js';
 import dayjs from 'dayjs';
-const MAX_VISIBLE_CITIES = 3;
+import {MAX_VISIBLE_CITIES } from '../const.js';
 
 function createTripInfoTemplate(route, dates, cost) {
   return (
@@ -54,7 +54,7 @@ export default class TripInfoView extends AbstractView {
       return `${cities[0]} &mdash; ... &mdash; ${cities.at(-1)}`;
     }
 
-    return cities.slice(0, MAX_VISIBLE_CITIES).join(' &mdash; ');
+    return cities.join(' &mdash; ');
   };
 
   getDates = (points) => {
