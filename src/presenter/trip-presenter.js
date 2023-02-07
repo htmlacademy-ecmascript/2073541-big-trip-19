@@ -65,7 +65,7 @@ export default class TripPresenter {
   };
 
 
-  #renderEmptyList() {
+  renderEmptyList() {
     this.#noPointComponent = new EmptyListView({
       filterType: this.#filterType
     });
@@ -216,6 +216,7 @@ export default class TripPresenter {
     this.#filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
     this.#newPointPresenter
       .init(point, this.offers, this.destinations);
+    remove(this.#noPointComponent);
   }
 
   #renderBoard() {
@@ -228,7 +229,7 @@ export default class TripPresenter {
 
     if (!points.length) {
       this.#renderTripInfo();
-      this.#renderEmptyList();
+      this.renderEmptyList();
       return;
     }
     this.#renderTripInfo();
