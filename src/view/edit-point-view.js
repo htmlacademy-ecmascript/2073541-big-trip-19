@@ -204,7 +204,9 @@ export default class EditPointView extends AbstractStatefulView {
       });
       return;
     }
-    evt.target.value = '';
+    this.updateElement({
+      destination: ''
+    });
   };
 
   #offerChangeHandler = (evt) => {
@@ -225,12 +227,12 @@ export default class EditPointView extends AbstractStatefulView {
     evt.preventDefault();
 
     if(isPositiveInteger(evt.target.value)) {
-      this.updateElement({
+      this._setState({
         basePrice: +evt.target.value
       });
       return;
     }
-    this.updateElement({
+    this._setState({
       basePrice: 0
     });
   };
@@ -256,25 +258,28 @@ export default class EditPointView extends AbstractStatefulView {
   };
 
   #dateFromChangeHandler = ([userDate]) => {
-    this.updateElement({
+    this._setState({
       dateFrom: userDate
     });
+    this.#setDateToPicker();
   };
 
   #dateToChangeHandler = ([userDate]) => {
-    this.updateElement({
+    this._setState({
       dateTo: userDate
     });
+    this.#setDateFromPicker();
   };
 
   #setDateFromPicker = () => {
     this.#datepickerFrom = flatpickr(
       this.element.querySelector('#event-start-time-1'),
       {
-        enableTime: true,
-        dateFormat: 'd/m/y H:i',
+        dateFormat: 'j/m/y H:i',
         defaultDate: this._state.dateFrom,
+        maxDate: this._state.dateTo,
         onChange: this.#dateFromChangeHandler,
+        enableTime: true,
         'time_24hr': true
       }
     );
@@ -284,11 +289,11 @@ export default class EditPointView extends AbstractStatefulView {
     this.#datepickerTo = flatpickr(
       this.element.querySelector('#event-end-time-1'),
       {
-        enableTime: true,
-        dateFormat: 'd/m/y H:i',
-        minDate: this._state.dateFrom,
+        dateFormat: 'j/m/y H:i',
         defaultDate: this._state.dateTo,
+        minDate: this._state.dateFrom,
         onChange: this.#dateToChangeHandler,
+        enableTime: true,
         'time_24hr': true
       }
     );
